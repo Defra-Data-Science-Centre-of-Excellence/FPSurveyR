@@ -22,15 +22,16 @@ whole number. The result is formatted as a percentage.
 \itemize{
 \item The input \code{val} should be numeric and represent decimal values between 0 and 1.
 \item The function uses \link[scales]{label_percent} to format the output as percentages, rounding to the nearest whole number.
+\item The function uses \link[janitor]{round_half_up} to ensure rounding of halves always rounds up, rather than R's default of down when even.
 }
 }
 \examples{
 #round_percent(0.25)  # Returns "25\%"
-#round_percent(c(0.1, 0.15, 0.23))  # Returns "10\%", "15\%", "23\%"
+#round_percent(c(0.1345, 0.155, 0.245))  # Returns "13\%", "16\%", "25\%"
 
 }
 \seealso{
-\link[scales]{label_percent}
+\link[scales]{label_percent}, \link[janitor]{round_half_up}
 }
 \author{
 Tom Pearson

@@ -30,7 +30,7 @@ given set of questions and response keys from the analysed survey data.
 }
 \details{
 \itemize{
-\item Rounds values before summing to ensure consistency.
+\item Rounds values using \link[janitor]{round_half_up} before summing to ensure consistency.
 \item Handles filtering of irregular or multiple-choice data with validation.
 \item Provides warnings and errors when input parameters are missing or invalid.
 }
@@ -40,6 +40,9 @@ given set of questions and response keys from the analysed survey data.
 #                                  response = c("yes", "no")))
 #get_percent(data_list, questions = 4, response_key = "yes", svy_year = "2024")
 
+}
+\seealso{
+\link[janitor]{round_half_up}
 }
 \author{
 Tom Pearson

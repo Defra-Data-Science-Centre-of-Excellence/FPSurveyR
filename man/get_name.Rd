@@ -45,7 +45,7 @@ the result as a percentage rather than its name.
 }
 \details{
 \itemize{
-\item The data is ordered by the proportion of holdings in descending order.
+\item The data are ordered by the proportion of holdings in descending order (pre-rounding).
 \item The function allows the exclusion of certain responses by their keywords.
 \item The \code{ordinal} parameter specifies which position to retrieve (e.g., the most common response or the 2nd most common).
 \item If \code{get_percent} is \code{TRUE}, the percentage of the selected response is returned.
@@ -58,6 +58,9 @@ the result as a percentage rather than its name.
 #get_name(data_list, questions = 4, svy_year = 2024, ordinal = 1)
 #get_name(data_list, questions = 4, svy_year = 2024, ordinal = 2, get_percent = TRUE)
 
+}
+\seealso{
+\link[janitor]{round_half_up}
 }
 \author{
 Tom Pearson

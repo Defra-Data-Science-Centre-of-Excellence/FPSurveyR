@@ -48,7 +48,7 @@ Practices Survey data, when comparing values between two survey years.
 \details{
 \itemize{
 \item The comparison is always done from an older date to a newer date.
-\item Values are rounded before comparison.
+\item Values are rounded using \link[janitor]{round_half_up} before comparison.
 \item Handles multiple response keys by summing their values unless the question is irregular.
 }
 }
@@ -59,6 +59,9 @@ Practices Survey data, when comparing values between two survey years.
 #get_doc(data_list, question = 4, response_key = "yes",
 #        svy_years = c(2024, 2023), past = FALSE, abbr = FALSE, get_pc = TRUE)
 
+}
+\seealso{
+\link[janitor]{round_half_up}
 }
 \author{
 Tom Pearson

@@ -29,6 +29,8 @@ uses the \code{scales::label_number()} function for formatting.
 \itemize{
 \item The \code{val} input must be numeric.
 \item \code{prefix}, \code{suffix}, and \code{big.mark} are optional formatting parameters to control how the numbers are displayed.
+\item The function uses \link[scales]{label_number} to format the output, rounding to the nearest whole number.
+\item The function uses \link[janitor]{round_half_up} to ensure rounding of halves always rounds up, rather than R's default of down when even.
 }
 }
 \examples{
@@ -38,6 +40,9 @@ uses the \code{scales::label_number()} function for formatting.
 #round_number(12345.67, big.mark = ",")  # Returns "12,346"
 #round_number(12345.67, prefix = "£", suffix = " units", big.mark = ",")  # Returns "£12,346 units"
 
+}
+\seealso{
+\link[scales]{label_number}, \link[janitor]{round_half_up}
 }
 \author{
 Tom Pearson

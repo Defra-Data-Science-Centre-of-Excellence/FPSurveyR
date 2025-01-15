@@ -13,13 +13,14 @@
 #' \itemize{
 #'   \item The input `val` should be numeric and represent decimal values between 0 and 1.
 #'   \item The function uses \link[scales]{label_percent} to format the output as percentages, rounding to the nearest whole number.
+#'   \item The function uses \link[janitor]{round_half_up} to ensure rounding of halves always rounds up, rather than R's default of down when even.
 #'   }
 #'
 #' @examples
 #' #round_percent(0.25)  # Returns "25%"
-#' #round_percent(c(0.1, 0.15, 0.23))  # Returns "10%", "15%", "23%"
+#' #round_percent(c(0.1345, 0.155, 0.245))  # Returns "13%", "16%", "25%"
 #'
-#' @seealso \link[scales]{label_percent}
+#' @seealso \link[scales]{label_percent}, \link[janitor]{round_half_up}
 #'
 #' @export
 round_percent <- function(val) {
@@ -34,6 +35,7 @@ round_percent <- function(val) {
   }
 
   #rounding=====================================================================
+  val <- janitor::round_half_up(val, digits = 2)
   scales::label_percent(accuracy = 1)(val)
 }
 
@@ -56,6 +58,8 @@ round_percent <- function(val) {
 #' \itemize{
 #'   \item The `val` input must be numeric.
 #'   \item `prefix`, `suffix`, and `big.mark` are optional formatting parameters to control how the numbers are displayed.
+#'   \item The function uses \link[scales]{label_number} to format the output, rounding to the nearest whole number.
+#'   \item The function uses \link[janitor]{round_half_up} to ensure rounding of halves always rounds up, rather than R's default of down when even.
 #'   }
 #'
 #' @examples
@@ -64,6 +68,8 @@ round_percent <- function(val) {
 #' #round_number(12345.67, suffix = " units")  # Returns "12346 units"
 #' #round_number(12345.67, big.mark = ",")  # Returns "12,346"
 #' #round_number(12345.67, prefix = "£", suffix = " units", big.mark = ",")  # Returns "£12,346 units"
+#'
+#' @seealso \link[scales]{label_number}, \link[janitor]{round_half_up}
 #'
 #' @export
 round_number <- function(val, prefix = NULL, suffix = NULL, big.mark = "") {
@@ -86,6 +92,7 @@ round_number <- function(val, prefix = NULL, suffix = NULL, big.mark = "") {
   }
 
   #round========================================================================
+  val <- janitor::round_half_up(val, digits = 0)
   scales::label_number(accuracy = 1,
                        prefix = prefix, suffix = suffix, big.mark = big.mark)(val)
 }
@@ -110,7 +117,7 @@ round_number <- function(val, prefix = NULL, suffix = NULL, big.mark = "") {
 #'
 #' @details
 #' \itemize{
-#'   \item Rounds values before summing to ensure consistency.
+#'   \item Rounds values using \link[janitor]{round_half_up} before summing to ensure consistency.
 #'   \item Handles filtering of irregular or multiple-choice data with validation.
 #'   \item Provides warnings and errors when input parameters are missing or invalid.
 #'   }
@@ -119,6 +126,8 @@ round_number <- function(val, prefix = NULL, suffix = NULL, big.mark = "") {
 #' #data_list <- list(Q4 = data.frame(year = "2024", value = c(50, 30),
 #' #                                  response = c("yes", "no")))
 #' #get_percent(data_list, questions = 4, response_key = "yes", svy_year = "2024")
+#'
+#' @seealso \link[janitor]{round_half_up}
 #'
 #' @export
 get_percent <- function(.data, questions, response_key, svy_year) {
@@ -179,7 +188,7 @@ get_percent <- function(.data, questions, response_key, svy_year) {
   }
 
 
-  tmp$value <- round(tmp$value, digits = 0)
+  tmp$value <- janitor::round_half_up(tmp$value, digits = 0)
 
   tmp <-
     tmp %>%
@@ -269,7 +278,7 @@ get_percent <- function(.data, questions, response_key, svy_year) {
 #' @details
 #' \itemize{
 #'   \item The comparison is always done from an older date to a newer date.
-#'   \item Values are rounded before comparison.
+#'   \item Values are rounded using \link[janitor]{round_half_up} before comparison.
 #'   \item Handles multiple response keys by summing their values unless the question is irregular.
 #'   }
 #'
@@ -279,6 +288,8 @@ get_percent <- function(.data, questions, response_key, svy_year) {
 #' #                                  response = c("yes", "yes")))
 #' #get_doc(data_list, question = 4, response_key = "yes",
 #' #        svy_years = c(2024, 2023), past = FALSE, abbr = FALSE, get_pc = TRUE)
+#'
+#' @seealso \link[janitor]{round_half_up}
 #'
 #' @export
 get_doc <- function(.data, question, response_key, svy_years, past = FALSE, abbr = FALSE, get_pc = FALSE) {
@@ -338,8 +349,8 @@ get_doc <- function(.data, question, response_key, svy_years, past = FALSE, abbr
   tmp1 <- dplyr::filter(tmp, year == svy_years[1])
   tmp2 <- dplyr::filter(tmp, year == svy_years[2])
 
-  tmp1$value <- round(tmp1$value, digits = 0)
-  tmp2$value <- round(tmp2$value, digits = 0)
+  tmp1$value <- janitor::round_half_up(tmp1$value, digits = 0)
+  tmp2$value <- janitor::round_half_up(tmp2$value, digits = 0)
 
   tmp1 <-
     tmp1 %>%
@@ -509,7 +520,7 @@ get_doc <- function(.data, question, response_key, svy_years, past = FALSE, abbr
 #'
 #' @details
 #' \itemize{
-#'   \item The data is ordered by the proportion of holdings in descending order.
+#'   \item The data are ordered by the proportion of holdings in descending order (pre-rounding).
 #'   \item The function allows the exclusion of certain responses by their keywords.
 #'   \item The `ordinal` parameter specifies which position to retrieve (e.g., the most common response or the 2nd most common).
 #'   \item If `get_percent` is `TRUE`, the percentage of the selected response is returned.
@@ -521,6 +532,8 @@ get_doc <- function(.data, question, response_key, svy_years, past = FALSE, abbr
 #' #                                  response = c("yes", "no", "maybe")))
 #' #get_name(data_list, questions = 4, svy_year = 2024, ordinal = 1)
 #' #get_name(data_list, questions = 4, svy_year = 2024, ordinal = 2, get_percent = TRUE)
+#'
+#' @seealso \link[janitor]{round_half_up}
 #'
 #' @export
 get_name <- function(.data, questions, svy_year, ordinal, get_percent = FALSE, responses_to_exclude = NULL) {
@@ -645,7 +658,7 @@ get_name <- function(.data, questions, svy_year, ordinal, get_percent = FALSE, r
 
   } else {
 
-    val <- round(vals$value[ordinal], digits = 0)
+    val <- janitor::round_half_up(vals$value[ordinal], digits = 0)
     val <- paste0(val, "%")
 
   }
