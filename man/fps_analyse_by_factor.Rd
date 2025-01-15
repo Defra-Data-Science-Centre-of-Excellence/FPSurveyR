@@ -2,7 +2,7 @@
 % Please edit documentation in R/analysis.R
 \name{fps_analyse_by_factor}
 \alias{fps_analyse_by_factor}
-\title{FPS: Analyse by factor}
+\title{FPS: Analysis: Analyse by factor}
 \usage{
 fps_analyse_by_factor(
   design,

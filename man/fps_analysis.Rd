@@ -2,7 +2,7 @@
 % Please edit documentation in R/analysis.R
 \name{fps_analysis}
 \alias{fps_analysis}
-\title{FPS: Analysis (high-level)}
+\title{FPS: Analysis: High-level analysis}
 \usage{
 fps_analysis(
   .data,

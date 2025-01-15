@@ -2,7 +2,7 @@
 % Please edit documentation in R/render.R
 \name{fps_format_md}
 \alias{fps_format_md}
-\title{FPS: Format Markdown files for GOV.UK}
+\title{FPS: Render: Format Markdown files for GOV.UK}
 \usage{
 fps_format_md(
   out_dir_md = ".",

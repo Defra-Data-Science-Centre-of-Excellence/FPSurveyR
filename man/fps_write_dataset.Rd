@@ -2,7 +2,7 @@
 % Please edit documentation in R/render.R
 \name{fps_write_dataset}
 \alias{fps_write_dataset}
-\title{FPS: Write dataset (XLSX)}
+\title{FPS: Render: Write dataset (XLSX)}
 \usage{
 fps_write_dataset(
   out_dir = ".",

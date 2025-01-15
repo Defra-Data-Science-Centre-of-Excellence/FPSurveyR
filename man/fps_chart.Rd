@@ -2,7 +2,8 @@
 % Please edit documentation in R/charts.R
 \name{fps_chart}
 \alias{fps_chart}
-\title{FPS: Chart}
+\title{FPS: Charts: Render image file imitation of GOV.UK auto-barchart for
+QA}
 \usage{
 fps_chart(.data, questions, years, yaxis, fill, stacked = TRUE)
 }

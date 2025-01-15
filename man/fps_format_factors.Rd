@@ -2,7 +2,7 @@
 % Please edit documentation in R/preprocessing.R
 \name{fps_format_factors}
 \alias{fps_format_factors}
-\title{FPS: Format factors}
+\title{FPS: Pre-processing: Format factors}
 \usage{
 fps_format_factors(
   .data,

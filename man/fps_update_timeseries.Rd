@@ -2,7 +2,7 @@
 % Please edit documentation in R/timeseries.R
 \name{fps_update_timeseries}
 \alias{fps_update_timeseries}
-\title{FPS: Update time series}
+\title{FPS: Time-series: Update time-series}
 \usage{
 fps_update_timeseries(
   tbl_list,

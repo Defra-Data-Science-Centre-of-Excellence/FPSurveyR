@@ -2,7 +2,7 @@
 % Please edit documentation in R/postprocessing.R
 \name{fps_name_responses}
 \alias{fps_name_responses}
-\title{FPS: Name Responses}
+\title{FPS: Name responses: Label the coded responses in the analysis results}
 \usage{
 fps_name_responses(
   table_list,

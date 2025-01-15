@@ -2,7 +2,7 @@
 % Please edit documentation in R/narrative.R
 \name{round_number}
 \alias{round_number}
-\title{Round Numbers with Optional Prefix, Suffix, and Separator}
+\title{FPS: Narrative: Round numbers (0 dp) and optionally format}
 \usage{
 round_number(val, prefix = NULL, suffix = NULL, big.mark = "")
 }

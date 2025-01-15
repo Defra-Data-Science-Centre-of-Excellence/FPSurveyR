@@ -2,7 +2,7 @@
 % Please edit documentation in R/postprocessing.R
 \name{fps_response_lookup_as_df}
 \alias{fps_response_lookup_as_df}
-\title{FPS: Response Lookup as DataFrame}
+\title{FPS: Name responses: Response lookup as data frame}
 \usage{
 fps_response_lookup_as_df(.data, ratio = FALSE)
 }

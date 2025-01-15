@@ -2,7 +2,7 @@
 % Please edit documentation in R/dataset.R
 \name{fps_make_allfarms_table}
 \alias{fps_make_allfarms_table}
-\title{FPS: make "All farms" table}
+\title{FPS: Dataset: Make "All farms" table}
 \usage{
 fps_make_allfarms_table(table_list, allfarms_lookup_list, ratio = FALSE)
 }

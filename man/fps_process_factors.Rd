@@ -2,7 +2,7 @@
 % Please edit documentation in R/analysis.R
 \name{fps_process_factors}
 \alias{fps_process_factors}
-\title{FPS: Process factors}
+\title{FPS: Analysis: Process factors}
 \usage{
 fps_process_factors(
   .data,

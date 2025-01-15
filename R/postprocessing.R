@@ -1,4 +1,4 @@
-#' @title FPS: Response Lookup as DataFrame
+#' @title FPS: Name responses: Response lookup as data frame
 #' @author Tom Pearson
 #' @description Converts a list of questions containing responses (coded and
 #'   English-readable) into a structured dataframe. The dataframe is designed
@@ -56,7 +56,7 @@ fps_response_lookup_as_df <- function(.data, ratio = FALSE) {
 }
 
 
-#' @title FPS: Name Responses
+#' @title FPS: Name responses: Label the coded responses in the analysis results
 #' @author Tom Pearson
 #' @description Joins coded variable names from analysis outputs to
 #'   human-readable names manually specified in a lookup dataframe, optionally

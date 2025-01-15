@@ -1,4 +1,4 @@
-#' @title FPS: stacked auto-barchart for GOV.UK
+#' @title FPS: Charts: Dodged auto-barchart for GOV.UK
 #' @author Tom Pearson
 #' @description This function processes survey data to generate a table for use
 #'   on GOV.UK as a dodged chart using the `{barchart}` tag. The output displays
@@ -128,7 +128,7 @@ fps_dodged <- function(.data, questions, svy_years, pivot_from_response = FALSE)
 
 }
 
-#' @title FPS: stacked auto-barchart for GOV.UK
+#' @title FPS: Charts: Stacked auto-barchart for GOV.UK
 #' @author Tom Pearson
 #' @description This function processes survey data to create a table for use on
 #'   GOV.UK as a stacked percentage chart using the `{barchart stacked}` tag.
@@ -232,7 +232,8 @@ fps_stacked <- function(.data, questions, svy_years) {
 
 }
 
-#' @title FPS: Chart
+#' @title FPS: Charts: Render image file imitation of GOV.UK auto-barchart for
+#'   QA
 #' @author Tom Pearson
 #' @description This function generates custom bar charts for Farm Practices
 #'   Survey (FPS) data using ggplot2. The charts mimic GOV.UK auto-barchart

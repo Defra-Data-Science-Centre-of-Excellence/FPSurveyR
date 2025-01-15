@@ -2,7 +2,7 @@
 % Please edit documentation in R/render.R
 \name{fps_delete_old_versions}
 \alias{fps_delete_old_versions}
-\title{FPS: Delete old versions (of reports/charts)}
+\title{FPS: Render: Delete old versions (of reports/charts)}
 \usage{
 fps_delete_old_versions(
   out_dir,

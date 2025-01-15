@@ -2,7 +2,7 @@
 % Please edit documentation in R/dataset.R
 \name{fps_update_dataset}
 \alias{fps_update_dataset}
-\title{FPS: Update Dataset}
+\title{FPS: Dataset: Update dataset}
 \usage{
 fps_update_dataset(
   table_list,

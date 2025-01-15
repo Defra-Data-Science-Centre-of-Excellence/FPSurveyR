@@ -2,7 +2,7 @@
 % Please edit documentation in R/analysis.R
 \name{fps_prepare_results}
 \alias{fps_prepare_results}
-\title{FPS: Prepare results}
+\title{FPS: Analysis: Prepare results}
 \usage{
 fps_prepare_results(
   design,

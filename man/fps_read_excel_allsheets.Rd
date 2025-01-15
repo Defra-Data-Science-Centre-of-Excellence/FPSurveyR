@@ -2,7 +2,7 @@
 % Please edit documentation in R/analysis.R
 \name{fps_read_excel_allsheets}
 \alias{fps_read_excel_allsheets}
-\title{FPS: Read Excel Allsheets}
+\title{FPS: Analysis: Read all Excel sheets}
 \usage{
 fps_read_excel_allsheets(filename)
 }

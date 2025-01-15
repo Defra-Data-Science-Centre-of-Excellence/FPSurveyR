@@ -2,7 +2,7 @@
 % Please edit documentation in R/preprocessing.R
 \name{fps_calc_weights}
 \alias{fps_calc_weights}
-\title{FPS: Calculate weights}
+\title{FPS: Pre-processing: Calculate weights}
 \usage{
 fps_calc_weights(
   .data,

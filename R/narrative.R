@@ -1,4 +1,4 @@
-#' @title Round Decimal Values to Percentages
+#' @title FPS: Narrative: Convert proportions to rounded percentages
 #' @author Tom Pearson
 #' @description This function converts a decimal value (e.g. 0.25) into a
 #'   percentage (e.g., 25%) by multiplying by 100 and rounding to the nearest
@@ -39,7 +39,7 @@ round_percent <- function(val) {
   scales::label_percent(accuracy = 1)(val)
 }
 
-#' @title Round Numbers with Optional Prefix, Suffix, and Separator
+#' @title FPS: Narrative: Round numbers (0 dp) and optionally format
 #' @author Tom Pearson
 #' @description This function rounds numeric values to the nearest whole number
 #'   and formats them with optional prefix, suffix, and thousands separator. It
@@ -97,7 +97,7 @@ round_number <- function(val, prefix = NULL, suffix = NULL, big.mark = "") {
                        prefix = prefix, suffix = suffix, big.mark = big.mark)(val)
 }
 
-#' @title FPS: narrative: get percent
+#' @title FPS: Narrative: Extract a single percentage from the analysis results
 #' @author Tom Pearson
 #' @description This function extracts and calculates the percentage value for a
 #'   given set of questions and response keys from the analysed survey data.
@@ -251,7 +251,8 @@ get_percent <- function(.data, questions, response_key, svy_year) {
 }
 
 
-#' @title FPS: narrative: get direction of change (doc)
+#' @title FPS: Narrative: Print the direction of change (doc) associated with
+#'   two values generated from the analysis results
 #' @author Tom Pearson
 #' @description This function determines the direction of change (increase,
 #'   decrease, or no change) for a specified question and response in Farm
@@ -494,7 +495,8 @@ get_doc <- function(.data, question, response_key, svy_years, past = FALSE, abbr
 
 }
 
-#' @title FPS: narrartive: get name
+#' @title FPS: Narrative: Print the name/category associated with a value based
+#'   on its ordered position in the analysis' results.
 #' @author Tom Pearson
 #' @description This function retrieves the response or percentage corresponding
 #'   to the specified ordinal position (e.g. the most common response) for a

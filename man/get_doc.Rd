@@ -2,7 +2,8 @@
 % Please edit documentation in R/narrative.R
 \name{get_doc}
 \alias{get_doc}
-\title{FPS: narrative: get direction of change (doc)}
+\title{FPS: Narrative: Print the direction of change (doc) associated with
+two values generated from the analysis results}
 \usage{
 get_doc(
   .data,

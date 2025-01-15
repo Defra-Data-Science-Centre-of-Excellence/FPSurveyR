@@ -2,7 +2,7 @@
 % Please edit documentation in R/dataset.R
 \name{fps_remove_no_column}
 \alias{fps_remove_no_column}
-\title{FPS: Remove "No" Column}
+\title{FPS: Dataset: Remove "No" column}
 \usage{
 fps_remove_no_column(table_list, questions, questions_to_combine_list = NULL)
 }

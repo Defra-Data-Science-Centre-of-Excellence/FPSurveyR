@@ -1,4 +1,4 @@
-#' @title FPS: Format factors
+#' @title FPS: Pre-processing: Format factors
 #' @author Tom Pearson
 #' @description This function formats the factor variables in a dataset based on
 #'   standard FPS conventions. It renames specific columns for region, farm
@@ -87,7 +87,7 @@ fps_format_factors <- function(.data,
 }
 
 
-#' @title FPS: Calculate weights
+#' @title FPS: Pre-processing: Calculate weights
 #' @author Tom Pearson
 #' @description This function calculates survey weights for Farm Practices
 #'   Survey (FPS) data by determining the number of observations per stratum,

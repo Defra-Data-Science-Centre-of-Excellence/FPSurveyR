@@ -2,7 +2,7 @@
 % Please edit documentation in R/charts.R
 \name{fps_dodged}
 \alias{fps_dodged}
-\title{FPS: stacked auto-barchart for GOV.UK}
+\title{FPS: Charts: Dodged auto-barchart for GOV.UK}
 \usage{
 fps_dodged(.data, questions, svy_years, pivot_from_response = FALSE)
 }

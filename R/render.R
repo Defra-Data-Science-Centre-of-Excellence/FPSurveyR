@@ -1,4 +1,4 @@
-#' @title FPS: Delete old versions (of reports/charts)
+#' @title FPS: Render: Delete old versions (of reports/charts)
 #' @author Tom Pearson
 #' @description This function deletes old versions of reports and charts in the
 #'   specified output directory if the `delete` parameter is set to `TRUE`. The
@@ -86,7 +86,7 @@ fps_delete_old_versions <- function(out_dir,
   }
 }
 
-#' @title FPS: Format Markdown files for GOV.UK
+#' @title FPS: Render: Format Markdown files for GOV.UK
 #' @author Tom Pearson
 #' @description This function processes `.md` files in a specified output
 #'   directory, removing YAML headers and replacing image tags to conform to
@@ -215,7 +215,7 @@ fps_format_md <- function(out_dir_md = ".",
 }
 
 
-#' @title FPS: Write dataset (XLSX)
+#' @title FPS: Render: Write dataset (XLSX)
 #' @author Tom Pearson
 #' @description This function saves the given dataset (workbook) to a file in
 #'   the specified output directory. The dataset is only saved once per run

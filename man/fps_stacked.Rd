@@ -2,7 +2,7 @@
 % Please edit documentation in R/charts.R
 \name{fps_stacked}
 \alias{fps_stacked}
-\title{FPS: stacked auto-barchart for GOV.UK}
+\title{FPS: Charts: Stacked auto-barchart for GOV.UK}
 \usage{
 fps_stacked(.data, questions, svy_years)
 }

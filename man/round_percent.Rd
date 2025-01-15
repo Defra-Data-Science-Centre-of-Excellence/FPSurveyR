@@ -2,7 +2,7 @@
 % Please edit documentation in R/narrative.R
 \name{round_percent}
 \alias{round_percent}
-\title{Round Decimal Values to Percentages}
+\title{FPS: Narrative: Convert proportions to rounded percentages}
 \usage{
 round_percent(val)
 }

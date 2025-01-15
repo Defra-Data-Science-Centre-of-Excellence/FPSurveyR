@@ -1,4 +1,4 @@
-#' @title FPS: Update time series
+#' @title FPS: Time-series: Update time-series
 #' @author Tom Pearson
 #' @description Updates the time-series data for each table or chart displayed
 #'   in the statistical notice. The function reads in existing time-series data

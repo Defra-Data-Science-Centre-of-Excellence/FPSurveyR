@@ -2,7 +2,7 @@
 % Please edit documentation in R/analysis.R
 \name{fps_add_empty_factors}
 \alias{fps_add_empty_factors}
-\title{FPS: Add empty factors}
+\title{FPS: Analysis: Add empty factors}
 \usage{
 fps_add_empty_factors(.data, factor_col = "cat", factor, factors_list_full)
 }

@@ -1,4 +1,4 @@
-#' @title FPS: Remove "No" Column
+#' @title FPS: Dataset: Remove "No" column
 #' @author Tom Pearson
 #' @description This function processes a list of tables (`table_list`) by
 #'   removing columns corresponding to "No" responses from specified questions,
@@ -186,7 +186,7 @@ fps_remove_no_column <- function(table_list, questions, questions_to_combine_lis
 
 }
 
-#' @title FPS: make "All farms" table
+#' @title FPS: Dataset: Make "All farms" table
 #' @author Tom Pearson
 #' @description This function processes a list of tables and integrates them
 #'   with a corresponding lookup list to create "All Farms" summary tables. It
@@ -280,7 +280,7 @@ fps_make_allfarms_table <- function(table_list, allfarms_lookup_list, ratio = FA
   return(tmp_table_list)
 }
 
-#' @title FPS: Update Dataset
+#' @title FPS: Dataset: Update dataset
 #' @author Tom Pearson
 #' @description This function processes survey results into a workbook,
 #'   formatting data and performing validation checks before inserting data into

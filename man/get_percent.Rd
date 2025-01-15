@@ -2,7 +2,7 @@
 % Please edit documentation in R/narrative.R
 \name{get_percent}
 \alias{get_percent}
-\title{FPS: narrative: get percent}
+\title{FPS: Narrative: Extract a single percentage from the analysis results}
 \usage{
 get_percent(.data, questions, response_key, svy_year)
 }

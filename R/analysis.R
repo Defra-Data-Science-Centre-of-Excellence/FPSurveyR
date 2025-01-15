@@ -1,4 +1,4 @@
-#' @title FPS: Process factors
+#' @title FPS: Analysis: Process factors
 #' @author Tom Pearson
 #' @description This function processes factors in the FPS dataset, including
 #'   standard factors (i.e. region, farm type, and farm size) and ad-hoc factors
@@ -152,7 +152,7 @@ fps_process_factors <- function(.data,
 }
 
 
-#' @title FPS: Analyse by factor
+#' @title FPS: Analysis: Analyse by factor
 #' @author Tom Pearson (adapted to srvyr methods)
 #' @description Computes means (as proportions) or ratios for the Farm Practices
 #'   Survey (FPS) data using a survey design object. This function is designed
@@ -359,7 +359,7 @@ fps_analyse_by_factor <- function(design,
 
 }
 
-#' @title FPS: Prepare results
+#' @title FPS: Analysis: Prepare results
 #' @author Tom Pearson
 #' @description This function calculates proportions or ratios for survey data
 #'   in binary format (using `fps_analyse_by_factor`), formats the results, and
@@ -598,7 +598,7 @@ fps_prepare_results <- function(design,
 
 }
 
-#' @title FPS: Read Excel Allsheets
+#' @title FPS: Analysis: Read all Excel sheets
 #' @author Tom Pearson
 #' @description This function reads all sheets from an Excel workbook and
 #'   returns them as a list of data frames.
@@ -646,7 +646,7 @@ fps_read_excel_allsheets <- function(filename) {
   return(tmp)
 }
 
-#' @title FPS: Add empty factors
+#' @title FPS: Analysis: Add empty factors
 #' @author Tom Pearson
 #' @description This function ensures that all expected factor levels, including
 #'   "All farms," are present in a dataset. If a factor level is missing, an
@@ -744,7 +744,7 @@ fps_add_empty_factors <- function(.data,
 
 }
 
-#' @title FPS: Analysis (high-level)
+#' @title FPS: Analysis: High-level analysis
 #' @author Tom Pearson
 #' @description This function performs high-level analysis for the Farm
 #'   Practices Survey (FPS). It processes survey data, sets the survey design,

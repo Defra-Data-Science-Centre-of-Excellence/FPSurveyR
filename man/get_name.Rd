@@ -2,7 +2,8 @@
 % Please edit documentation in R/narrative.R
 \name{get_name}
 \alias{get_name}
-\title{FPS: narrartive: get name}
+\title{FPS: Narrative: Print the name/category associated with a value based
+on its ordered position in the analysis' results.}
 \usage{
 get_name(
   .data,
