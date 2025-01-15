@@ -150,7 +150,7 @@ fps_dodged <- function(.data, questions, svy_years, pivot_from_response = FALSE)
 #'   added.
 #'
 #' @details
-#' \itemzie{
+#' \itemize{
 #'   \item The function works with survey data stored in `tbl_list` for each section. Each table should represent a survey question.
 #'   \item It filters the data to include only the specified survey years, formats the response proportions as percentages, and arranges the data in a stacked format.
 #'   \item The input questions should be valid and exist in the `.data` list. If a question is not collected in the given years, the function will notify the user.
