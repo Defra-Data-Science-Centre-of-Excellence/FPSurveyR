@@ -12,11 +12,11 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 <!-- badges: end -->
 
 This package contains all the required functions for pre-processing the
-Farm Practises Survey data exported from SQL by the June team, analysing
-the data to produce means/ratios and associated confidence intervals,
-and undertaking post-processing to format the data correctly for output
-as part of a RAP using parameterised R markdown to produce the
-statistical report on GOV.UK.
+Farm Practises Survey data exported from MS Access by the June team,
+analysing the data to produce means/ratios and associated confidence
+intervals, and undertaking post-processing to format the data correctly
+for output as part of a RAP using parameterised R markdown to produce
+the statistical report on GOV.UK.
 
 ## Installation
 
