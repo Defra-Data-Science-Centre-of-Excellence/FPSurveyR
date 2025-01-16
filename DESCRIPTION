@@ -1,8 +1,9 @@
 Package: FPSurveyR
-Title: Farm Practices Survey - an R package containing functions for data analysis and statistical notice production.
-Version: 0.0.0.9000
+Title: Farm Practices Survey - an R package containing functions for data analysis and statistical notice production
+Version: 1.0.0
 Authors@R: 
-    person("Tom", "Pearson", , "thomas.pearson@defra.gov.uk", role = c("aut", "cre"))
+    c(person("Tom", "Pearson", email = "thomas.pearson@defra.gov.uk", role = c("aut", "cre")),
+    person("Crown Copyright (Defra)", role = "cph"))
 Description: This package contains all the required functions for pre-processing the Farm Practises Survey data exported from MS Access by the June team, analysing the data to produce means/ratios and associated confidence intervals, and undertaking post-processing to format the data correctly for output as part of a RAP using parameterised R markdown to produce the statistical report on GOV.UK.
 License: MIT + file LICENSE
 Encoding: UTF-8
@@ -14,7 +15,14 @@ Suggests:
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Imports: 
-    base,
-    dplyr,
-    magrittr
+    magrittr, rlang,
+    dplyr, tidyr,
+    readr, openxlsx, readxl, RODBC,
+    lubridate,
+    srvyr, purrr, forcats,
+    reshape2, janitor, data.table,
+    here, cli, 
+    glue, english, snakecase,
+    scales,
+    afcharts
 Config/testthat/edition: 3
