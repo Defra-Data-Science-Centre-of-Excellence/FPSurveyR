@@ -154,7 +154,7 @@ fps_process_factors <- function(.data,
 
 #' @title FPS: Analysis: Analyse by factor
 #' @author Tom Pearson (adapted to srvyr methods)
-#' @description Computes means (as proportions) or ratios for the Farm Practices
+#' @description Computes means or ratios for the Farm Practices
 #'   Survey (FPS) data using a survey design object. This function is designed
 #'   for use with `fps_prepare_results`.
 #'
@@ -167,14 +167,14 @@ fps_process_factors <- function(.data,
 #' @param denominator (Optional) A character string specifying the denominator
 #'   variable for ratio calculations. Required if `ratio = TRUE`.
 #' @param ratio A logical value indicating whether to calculate ratios (`TRUE`)
-#'   or proportions (`FALSE`). Defaults to `FALSE`.
+#'   or means (`FALSE`). Defaults to `FALSE`.
 #' @param factor_col A character string specifying the column name for the
 #'   factor in the output. Defaults to `"cat"`.
 #'
 #' @return A data frame containing the computed statistics, including:
 #' \itemize{
 #'   \item Unweighted counts.
-#'   \item Weighted proportions or ratios.
+#'   \item Weighted means or ratios.
 #'   \item Confidence intervals.
 #'   }
 #'
@@ -270,7 +270,7 @@ fps_analyse_by_factor <- function(design,
   #calculate means==============================================================
   if(ratio == FALSE && is.null(denominator)) {
 
-    method <- "mean" #note this is actually proportion
+    method <- "mean"
     stat_name <- sym(paste0(variable, "_", method))
 
     all_res <-
@@ -278,11 +278,13 @@ fps_analyse_by_factor <- function(design,
       dplyr::summarise(
         # produce unweighted counts
         {{nobs_name}} := srvyr::unweighted(sum({{var}} == 1)),
-        # produce weighted proportions and confidence intervals
+        # produce weighted means and confidence intervals
         {{var}} := srvyr::survey_mean({{var}},
-                                      proportion = TRUE,
+                                      proportion = FALSE,
                                       vartype = var_type,
-                                      level = ci_level)) %>%
+                                      level = ci_level,
+                                      na.rm = TRUE,
+                                      df = Inf)) %>%
       dplyr::rename({{stat_name}} := {{var}}) %>%
       dplyr::mutate({{factor_col}} := "All farms") %>%
       dplyr::relocate({{factor_col}}, .before = 1)
@@ -293,11 +295,13 @@ fps_analyse_by_factor <- function(design,
       dplyr::summarise(
         # produce unweighted counts (NB: this assumes data are binary!)
         {{nobs_name}} := srvyr::unweighted(sum({{var}} == 1)),
-        # produce weighted proportions and confidence intervals
+        # produce weighted means and confidence intervals
         {{var}} := srvyr::survey_mean({{var}},
-                                      proportion = TRUE,
+                                      proportion = FALSE,
                                       vartype = var_type,
-                                      level = ci_level)) %>%
+                                      level = ci_level,
+                                      na.rm = TRUE,
+                                      df = Inf)) %>%
       dplyr::rename({{stat_name}} := {{var}},
                     {{factor_col}} := {{factor}})
 
@@ -319,7 +323,9 @@ fps_analyse_by_factor <- function(design,
         {{var}} := srvyr::survey_ratio(numerator = {{var}},
                                        denominator = {{denominator}},
                                        vartype = var_type,
-                                       level = ci_level)) %>%
+                                       level = ci_level,
+                                       na.rm = TRUE,
+                                       df = Inf)) %>%
       dplyr::rename({{stat_name}} := {{var}}) %>%
       dplyr::mutate({{factor_col}} := "All farms") %>%
       dplyr::relocate({{factor_col}}, .before = 1)
@@ -334,7 +340,9 @@ fps_analyse_by_factor <- function(design,
         {{var}} := srvyr::survey_ratio(numerator = {{var}},
                                        denominator = {{denominator}},
                                        vartype = var_type,
-                                       level = ci_level)) %>%
+                                       level = ci_level,
+                                       na.rm = TRUE,
+                                       df = Inf)) %>%
       dplyr::rename({{stat_name}} := {{var}},
                     {{factor_col}} := {{factor}})
 
@@ -361,7 +369,7 @@ fps_analyse_by_factor <- function(design,
 
 #' @title FPS: Analysis: Prepare results
 #' @author Tom Pearson
-#' @description This function calculates proportions or ratios for survey data
+#' @description This function calculates means or ratios for survey data
 #'   in binary format (using `fps_analyse_by_factor`), formats the results, and
 #'   saves them to an Excel file. The function iterates over multiple factors
 #'   and variables, performing the analysis and saving the results into separate
@@ -376,7 +384,7 @@ fps_analyse_by_factor <- function(design,
 #' @param denominator (Optional) A character string specifying the denominator
 #'   variable for ratio calculations. Required if `ratio = TRUE`.
 #' @param ratio A logical value indicating whether to calculate ratios (`TRUE`)
-#'   or proportions (`FALSE`). Defaults to `FALSE`.
+#'   or means (`FALSE`). Defaults to `FALSE`.
 #' @param factor_col A character string specifying the column name for factors
 #'   in the output. Defaults to `"cat"`.
 #' @param excel_file_path A character string specifying the file path where the
@@ -387,7 +395,7 @@ fps_analyse_by_factor <- function(design,
 #'
 #' @details
 #' \itemize{
-#'   \item Proportions are calculated when `ratio = FALSE` (default). Ratios are calculated when `ratio = TRUE`, and a denominator variable must be provided.
+#'   \item Means are calculated when `ratio = FALSE` (default). Ratios are calculated when `ratio = TRUE`, and a denominator variable must be provided.
 #'   \item Results are saved in separate sheets named after each factor in the `factors` parameter.
 #'   \item Binary variables in `variables` should contain `1` for presence and `0` for absence.
 #'   \item For variables with "answered" in their names, warnings from convergence issues are suppressed to avoid irrelevant messages.
@@ -774,7 +782,7 @@ fps_add_empty_factors <- function(.data,
 #'   consistency. Defaults to `NULL`.
 #' @param ratio Logical. If `TRUE`, the analysis calculates ratios for the
 #'   specified questions using a denominator derived from the variable names in
-#'   `questions_list`. If `FALSE`, proportions are calculated. Defaults to
+#'   `questions_list`. If `FALSE`, means are calculated. Defaults to
 #'   `FALSE`.
 #' @param results_fp A character string specifying the file path where
 #'   intermediate analysis results will be saved as XLSX files. The path must
@@ -1007,7 +1015,7 @@ fps_analysis <- function(.data,
 
       denom <- NULL
       results_ext <- ""
-      method <- "mean" #this is actually proportion
+      method <- "mean"
 
     }
 
