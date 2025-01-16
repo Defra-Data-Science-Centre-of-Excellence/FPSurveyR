@@ -1,3 +1,3 @@
 # FPSurveyR (development version)
 
-* First iteration of FPSurveyR uploaded to Github.
+* Initial release of FPSurveyR to Github.
