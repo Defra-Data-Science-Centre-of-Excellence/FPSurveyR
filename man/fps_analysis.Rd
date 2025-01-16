@@ -46,7 +46,7 @@ consistency. Defaults to \code{NULL}.}
 
 \item{ratio}{Logical. If \code{TRUE}, the analysis calculates ratios for the
 specified questions using a denominator derived from the variable names in
-\code{questions_list}. If \code{FALSE}, proportions are calculated. Defaults to
+\code{questions_list}. If \code{FALSE}, means are calculated. Defaults to
 \code{FALSE}.}
 
 \item{results_fp}{A character string specifying the file path where

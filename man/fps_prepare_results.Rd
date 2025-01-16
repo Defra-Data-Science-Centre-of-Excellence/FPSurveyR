@@ -28,7 +28,7 @@ analyze.}
 variable for ratio calculations. Required if \code{ratio = TRUE}.}
 
 \item{ratio}{A logical value indicating whether to calculate ratios (\code{TRUE})
-or proportions (\code{FALSE}). Defaults to \code{FALSE}.}
+or means (\code{FALSE}). Defaults to \code{FALSE}.}
 
 \item{factor_col}{A character string specifying the column name for factors
 in the output. Defaults to \code{"cat"}.}
@@ -41,7 +41,7 @@ Saves the analysis results into an Excel file at the specified
 \code{excel_file_path}.
 }
 \description{
-This function calculates proportions or ratios for survey data
+This function calculates means or ratios for survey data
 in binary format (using \code{fps_analyse_by_factor}), formats the results, and
 saves them to an Excel file. The function iterates over multiple factors
 and variables, performing the analysis and saving the results into separate
@@ -49,7 +49,7 @@ sheets (1 for each factor) in the output file.
 }
 \details{
 \itemize{
-\item Proportions are calculated when \code{ratio = FALSE} (default). Ratios are calculated when \code{ratio = TRUE}, and a denominator variable must be provided.
+\item Means are calculated when \code{ratio = FALSE} (default). Ratios are calculated when \code{ratio = TRUE}, and a denominator variable must be provided.
 \item Results are saved in separate sheets named after each factor in the \code{factors} parameter.
 \item Binary variables in \code{variables} should contain \code{1} for presence and \code{0} for absence.
 \item For variables with "answered" in their names, warnings from convergence issues are suppressed to avoid irrelevant messages.

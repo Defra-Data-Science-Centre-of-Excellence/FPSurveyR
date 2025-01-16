@@ -27,7 +27,7 @@ to analyze.}
 variable for ratio calculations. Required if \code{ratio = TRUE}.}
 
 \item{ratio}{A logical value indicating whether to calculate ratios (\code{TRUE})
-or proportions (\code{FALSE}). Defaults to \code{FALSE}.}
+or means (\code{FALSE}). Defaults to \code{FALSE}.}
 
 \item{factor_col}{A character string specifying the column name for the
 factor in the output. Defaults to \code{"cat"}.}
@@ -36,12 +36,12 @@ factor in the output. Defaults to \code{"cat"}.}
 A data frame containing the computed statistics, including:
 \itemize{
 \item Unweighted counts.
-\item Weighted proportions or ratios.
+\item Weighted means or ratios.
 \item Confidence intervals.
 }
 }
 \description{
-Computes means (as proportions) or ratios for the Farm Practices
+Computes means or ratios for the Farm Practices
 Survey (FPS) data using a survey design object. This function is designed
 for use with \code{fps_prepare_results}.
 }
