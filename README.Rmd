@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-This package contains all the required functions for pre-processing the Farm Practises Survey data exported from MS Access by the June team, analysing the data to produce means/ratios and associated confidence intervals, and undertaking post-processing to format the data correctly for output as part of a RAP using parameterised R markdown to produce the statistical report on GOV.UK.
+This package contains all the required functions for producing the [Farm Practices Survey (FPS)](https://www.gov.uk/government/collections/farm-practices-survey) staistical notice, dataset and values for the time-series. The functions are designed to work within the FPS analysis pipeline which is a separate R Project. The pipeline pre-processes the FPS data exported from MS Access by the June team, analyses the data to produce means/ratios plus associated confidence intervals, and undertakes post-processing to format the data correctly for output using parameterised R Markdown to produce the statistical report on GOV.UK.
 
 ## Installation
 
@@ -38,3 +38,6 @@ Load the package:
 library(FPSurveyR)
 ```
 
+TODO:
+* Testing
+* Add global options?
