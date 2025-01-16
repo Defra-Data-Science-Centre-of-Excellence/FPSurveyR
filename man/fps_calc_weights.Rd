@@ -31,7 +31,7 @@ to join the datasets (strata column). Default is \code{"post_strat"}.}
 \value{
 A data frame with the population column (\code{num_pop}) added to the
 input data, and strata (\code{join_col}) converted to factors. Weights are
-calculated but not included in the output, as the \code{survey} package
+calculated but not included in the output, as the \code{svyr} package
 automatically computes these when using \code{fpc}.
 }
 \description{
