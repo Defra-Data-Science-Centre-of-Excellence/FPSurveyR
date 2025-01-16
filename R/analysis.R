@@ -40,10 +40,9 @@
 fps_process_factors <- function(.data,
                                 question,
                                 factors,
-                                #factors_list_full,
                                 factors_list,
-                                adhoc_factors_list,
-                                adhoc_factors_levels_list) {
+                                adhoc_factors_list = NULL,
+                                adhoc_factors_levels_list = NULL) {
 
   #testing======================================================================
   # .data = tmp_data
@@ -89,7 +88,7 @@ fps_process_factors <- function(.data,
 
       #get new factor
       new_factor <- adhoc_factors_list[[question]][[j]]
-      new_factor_sym <- sym(new_factor)
+      new_factor_sym <- rlang::sym(new_factor)
 
       #adding new factor to list of standard (hard-coded) factors for analysis
       factors <- c(factors, new_factor)
@@ -259,10 +258,10 @@ fps_analyse_by_factor <- function(design,
 
   #set variables================================================================
 
-  factor <- sym(factor)
-  factor_col <- sym(factor_col)
-  var <- sym(variable)
-  nobs_name <- sym(paste0(variable, "_nobs"))
+  factor <- rlang::sym(factor)
+  factor_col <- rlang::sym(factor_col)
+  var <- rlang::sym(variable)
+  nobs_name <- rlang::sym(paste0(variable, "_nobs"))
 
   var_type <- "ci"
   ci_level <- 0.95
@@ -271,7 +270,7 @@ fps_analyse_by_factor <- function(design,
   if(ratio == FALSE && is.null(denominator)) {
 
     method <- "mean"
-    stat_name <- sym(paste0(variable, "_", method))
+    stat_name <- rlang::sym(paste0(variable, "_", method))
 
     all_res <-
       design %>%
@@ -311,8 +310,8 @@ fps_analyse_by_factor <- function(design,
   } else if(ratio == TRUE && !is.null(denominator)) {
 
     method <- "ratio"
-    stat_name <- sym(paste0(variable, "_", method))
-    denominator <- sym(denominator)
+    stat_name <- rlang::sym(paste0(variable, "_", method))
+    denominator <- rlang::sym(denominator)
 
     all_res <-
       design %>%
@@ -353,7 +352,7 @@ fps_analyse_by_factor <- function(design,
 
   fps_out <- rbind(fac_res,
                    all_res)
-  ci_name <- sym(paste0(variable, "_ci"))
+  ci_name <- rlang::sym(paste0(variable, "_ci"))
   fps_out <-
     fps_out %>%
     dplyr::rename_with(~ "upp", ends_with("upp")) %>%
@@ -580,7 +579,7 @@ fps_prepare_results <- function(design,
     tmp <-
       res[[i]] %>%
       #join all results from each var for the same q together in one table
-      purrr::reduce(., full_join, by = factor_col) %>%
+      purrr::reduce(., dplyr::full_join, by = factor_col) %>%
       #reorder columns
       dplyr::select({{factor_col}},
                     dplyr::ends_with(paste0(method)), #mean/ratio
@@ -658,8 +657,8 @@ fps_read_excel_allsheets <- function(filename) {
 #' @author Tom Pearson
 #' @description This function ensures that all expected factor levels, including
 #'   "All farms," are present in a dataset. If a factor level is missing, an
-#'   empty row (filled with `NA`) is added to the dataset to preserve the
-#'   dataset dimensions.
+#'   empty row (filled with `NA`) is added to the dataset and the data are
+#'   re-ordered to preserve the dataset dimensions.
 #'
 #' @param .data A data frame containing the analysis data.
 #' @param factor_col A string specifying the column name in `.data` containing
@@ -667,14 +666,17 @@ fps_read_excel_allsheets <- function(filename) {
 #' @param factor A string specifying the name of the factor to check for missing
 #'   levels.
 #' @param factors_list_full A named list of all expected factor levels, where
-#'   each name corresponds to a factor, and the value is a vector of levels.
+#'   each name corresponds to a factor, and the value is a vector of levels. The
+#'   data are also re-ordered (by row) depending on the order of the supplied
+#'   factor levels
 #'
-#' @return A data frame with rows added for any missing factor levels, filled
-#'   with `NA` values.
+#' @return A re-oredered data frame with rows added for any missing factor
+#'   levels, filled with `NA` values.
 #'
 #' @details If a category from `factors_list_full` is missing in the specified
-#'   `factor_col`, this function adds an empty row for that category. A warning
-#'   message is displayed for each missing category that is added.
+#'   `factor_col`, this function adds an empty row for that category at the
+#'   correct location. A warning message is displayed for each missing category
+#'   that is added.
 #'
 #' @examples
 #' #data <- data.frame(cat = c("A", "B"), value = c(10, 20))
@@ -692,6 +694,11 @@ fps_add_empty_factors <- function(.data,
   # factor_col = "cat"
   # factor = f
   # factors_list_full = factors_list_full
+
+  # .data = testing_res
+  # factor_col = "cat"
+  # factor = "fps_slr_name"
+  # factors_list_full = testing_fcts_lvl
 
   #add empty factors============================================================
 
@@ -719,6 +726,13 @@ fps_add_empty_factors <- function(.data,
   #adding missing factor categories in analysis as empty rows===================
   cats <- c(unlist(unname(factors_list_full[factor])), "All farms")
 
+  #ensure df order is as expected from order in factors_list supplied
+  .data <-
+    .data %>%
+    dplyr::mutate(order = match(cat, cats)) %>%
+    dplyr::arrange(order) %>%
+    dplyr::select(-order)
+
   if(any(!(cats %in% .data[[factor_col]]))) {
 
     for(c in cats) {
@@ -739,14 +753,23 @@ fps_add_empty_factors <- function(.data,
           rbind(
             .data[1:index-1,],
             new_row,
-            .data[index:nrow(.data), ]
-          )
+            .data[index:nrow(.data), ])
+
+        #ensure df order is as expected from order in factors_list supplied (once missing factor added)
+        .data <-
+          .data %>%
+          dplyr::mutate(order = match(cat, cats)) %>%
+          dplyr::arrange(order) %>%
+          dplyr::select(-order)
 
       }
 
     }
 
   }
+
+  .data <- as.data.frame(.data)
+  rownames(.data) <- seq_len(nrow(.data))
 
   return(.data)
 
@@ -956,7 +979,7 @@ fps_analysis <- function(.data,
 
     #set question-specific variables
     q <- names(questions_list[i])
-    answered_q <- sym(paste0("answered_", q))
+    answered_q <- rlang::sym(paste0("answered_", q))
     questions <- questions_list[[q]]
     question_opts <- questions[!grepl("answered", questions)]
 
@@ -1005,7 +1028,7 @@ fps_analysis <- function(.data,
     if(ratio == TRUE) {
 
       #get denominator to use in ratio calculations from the response name using str_extract
-      #e.g. column Q1_3 must be called "area1_3" to extract "area" from the name.
+      #e.g. column Q1_3 must be called "Q1_3_area" to extract "area" from the name.
       #This assumes that a variable/column called "area" is also in the dataset as those values will be used to calculated the ratio from (used as the denominator)
       results_ext <- stringr::str_extract(questions[2], "([_a-z_A-Z]+)$")
       denom <- stringr::str_replace(results_ext, "_", "")

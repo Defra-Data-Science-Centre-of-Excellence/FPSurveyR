@@ -16,22 +16,25 @@ the factor categories. Defaults to \code{"cat"}.}
 levels.}
 
 \item{factors_list_full}{A named list of all expected factor levels, where
-each name corresponds to a factor, and the value is a vector of levels.}
+each name corresponds to a factor, and the value is a vector of levels. The
+data are also re-ordered (by row) depending on the order of the supplied
+factor levels}
 }
 \value{
-A data frame with rows added for any missing factor levels, filled
-with \code{NA} values.
+A re-oredered data frame with rows added for any missing factor
+levels, filled with \code{NA} values.
 }
 \description{
 This function ensures that all expected factor levels, including
 "All farms," are present in a dataset. If a factor level is missing, an
-empty row (filled with \code{NA}) is added to the dataset to preserve the
-dataset dimensions.
+empty row (filled with \code{NA}) is added to the dataset and the data are
+re-ordered to preserve the dataset dimensions.
 }
 \details{
 If a category from \code{factors_list_full} is missing in the specified
-\code{factor_col}, this function adds an empty row for that category. A warning
-message is displayed for each missing category that is added.
+\code{factor_col}, this function adds an empty row for that category at the
+correct location. A warning message is displayed for each missing category
+that is added.
 }
 \examples{
 #data <- data.frame(cat = c("A", "B"), value = c(10, 20))

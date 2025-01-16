@@ -9,8 +9,8 @@ fps_process_factors(
   question,
   factors,
   factors_list,
-  adhoc_factors_list,
-  adhoc_factors_levels_list
+  adhoc_factors_list = NULL,
+  adhoc_factors_levels_list = NULL
 )
 }
 \arguments{
