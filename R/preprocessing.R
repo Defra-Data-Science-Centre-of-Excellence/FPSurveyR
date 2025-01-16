@@ -26,6 +26,7 @@
 #' #  post_strat = c("1", "2", "3"))
 #' #formatted_data <- fps_format_factors(data)
 #'
+#' @importFrom magrittr %>%
 #' @export
 fps_format_factors <- function(.data,
                                region_col = "fps_nuts_name", #should be fps_gor
@@ -73,12 +74,11 @@ fps_format_factors <- function(.data,
                   fps_robust = {{farm_type_col}},
                   post_strat = {{strat_col}}) %>%
     dplyr::mutate(fps_gor = gsub(" \\(England\\)", "", fps_gor, ignore.case = TRUE),
-                  fps_gor = gsub("^North West$", "North West and Merseyside", fps_gor, ignore.case = TRUE),
+                  fps_gor = ifelse(grepl("North West", fps_gor, ignore.case = TRUE), "North West and Merseyside", fps_gor),
 
                   fps_slr_name = snakecase::to_sentence_case(fps_slr_name),
 
-                  fps_robust = gsub("Pigspoultry", "Pigs and poultry", fps_robust, ignore.case = TRUE),
-                  fps_robust = gsub("Pigs & poultry","Pigs and poultry", fps_robust, ignore.case = TRUE),
+                  fps_robust = ifelse(grepl("pig|poultry", fps_robust, ignore.case = TRUE), "Pigs and poultry", fps_robust),
 
                   post_strat = as.character(post_strat))
 
@@ -107,7 +107,7 @@ fps_format_factors <- function(.data,
 #'   to join the datasets (strata column). Default is `"post_strat"`.
 #' @return A data frame with the population column (`num_pop`) added to the
 #'   input data, and strata (`join_col`) converted to factors. Weights are
-#'   calculated but not included in the output, as the `survey` package
+#'   calculated but not included in the output, as the `svyr` package
 #'   automatically computes these when using `fpc`.
 #'
 #' @examples
@@ -119,6 +119,7 @@ fps_format_factors <- function(.data,
 #' #  post_strat = c("A", "B"),
 #' #  npop = c(100, 200))
 #'
+#' @importFrom magrittr %>%
 #' @export
 fps_calc_weights <- function(.data,
                              pop_df,
@@ -154,8 +155,12 @@ fps_calc_weights <- function(.data,
     cli::cli_abort("`pop_df` must include the columns  {.var {join_col}} and  {.var {pop_col}}.")
   }
 
-  if (!is.numeric(pop[[pop_col]])) {
+  if (!is.numeric(pop_df[[pop_col]])) {
     cli::cli_abort("{.var {pop_col}}` must be numeric.")
+  }
+
+  if (!is.character(pop_df[[join_col]])) {
+    cli::cli_abort("{.var {join_col}}` must be character class.")
   }
 
   # Ensure the join column has compatible levels between .data and pop_df
@@ -165,9 +170,9 @@ fps_calc_weights <- function(.data,
 
   #processing===================================================================
 
-  unique_ref_col <- sym(unique_ref_col)
-  join_col <- sym(join_col)
-  pop_col <- sym(pop_col)
+  unique_ref_col <- rlang::sym(unique_ref_col)
+  join_col <- rlang::sym(join_col)
+  pop_col <- rlang::sym(pop_col)
 
   # Calculate the number of unique observations per stratum
   samp_tot <-
