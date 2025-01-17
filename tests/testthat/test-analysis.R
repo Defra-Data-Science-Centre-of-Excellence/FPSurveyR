@@ -61,7 +61,7 @@ testthat::test_that("fps_process_factors removes missing factors from the factor
     fps_process_factors(testing_svy,
                         question = "Q1",
                         factors = testing_fcts,
-                        factors_list = testing_fcts_lvl,)$factors_list$fps_robust
+                        factors_list = testing_fcts_lvl)$factors_list$fps_robust
   exp <-
     c("Pigs and poultry",
       "Dairy",
