@@ -131,23 +131,23 @@ fps_remove_no_column <- function(table_list, questions, questions_to_combine_lis
           tmp_data %>%
           dplyr::select(dplyr::matches("_1_([a-zA-Z]*_)?(mean|ratio)$")) %>%
           names() %>%
-          sym()
+          rlang::sym()
         yes_ans_col_q2 <-
           tmp_data_q2 %>%
           dplyr::select(dplyr::matches("_1_([a-zA-Z]*_)?(mean|ratio)$")) %>%
           names() %>%
-          sym()
+          rlang::sym()
 
         yes_ci_col <-
           tmp_data %>%
           dplyr::select(dplyr::ends_with("_ci")) %>%
           names() %>%
-          sym()
+          rlang::sym()
         yes_ci_col_q2 <-
           tmp_data_q2 %>%
           dplyr::select(dplyr::ends_with("_ci")) %>%
           names() %>%
-          sym()
+          rlang::sym()
 
         tmp_data <-
           dplyr::left_join(tmp_data,
@@ -347,6 +347,15 @@ fps_update_dataset <- function(table_list, questions, standard_factors_list,
   # sheet = s1_sheet
   # rownum_list = s1_rownum_list
   # special_qs = irregular_qs
+
+  # table_list = testing_res
+  # questions = "Q1"
+  # standard_factors_list = testing_fcts_lvl
+  # workbook = testing_wb
+  # sheet =  "Nutrient_Management_-_Holdings"
+  # rownum_list = list(c(7, 12, 22))
+  # special_qs =  c("Q3", "Q4a", "Q4b", "Q7", "Q8", "Q21", "Q9xQ13")
+  # ratio = F
 
   #validation (input args)======================================================
   if (!is.list(table_list) || length(table_list) == 0) {
