@@ -233,15 +233,15 @@ testthat::test_that("fps_add_empty_factors adds NA rows for missing factors", {
 
 #fps_analysis###################################################################
 testthat::test_that("fps_analysis: everything must work as a whole - Q1 means", {
-  tmp_file_res <- tempdir()
-  tmp_file_tbl <- tempdir()
+  tmp_dir_res <- tempdir()
+  tmp_dir_tbl <- tempdir()
 
   act <-
     fps_analysis(testing_svy,
                  questions_list = list("Q1" = c("answered_Q1", "Q1_1", "Q1_2", "Q1_3")),
                  standard_factors_list = testing_fcts_lvl,
-                 results_fp = tmp_file_res,
-                 tables_fp = tmp_file_tbl)$Q1$fps_slr_name %>%
+                 results_fp = tmp_dir_res,
+                 tables_fp = tmp_dir_tbl)$Q1$fps_slr_name %>%
     dplyr::mutate(dplyr::across( dplyr::where(is.numeric), ~ round(., digits = 3) ))
 
   exp <-
