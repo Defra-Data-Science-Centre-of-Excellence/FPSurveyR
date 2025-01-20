@@ -8,6 +8,7 @@ fps_name_responses(
   table_list,
   analysis_questions,
   response_lookup_df,
+  survey_year = as.numeric(format(Sys.Date(), "\%Y")),
   ratio = FALSE,
   category = "All farms",
   factor = 1,
@@ -22,6 +23,10 @@ table names in \code{table_list}).}
 
 \item{response_lookup_df}{A data frame mapping response codes to
 human-readable names, including a "question" column.}
+
+\item{survey_year}{Numeric. Defaults to the current system year (e.g. 2025).
+This will be appended to the output table so that data can be distinguished
+when adding to the time series later on.}
 
 \item{ratio}{Logical. If \code{TRUE}, use "ratio" instead of "mean" as the
 aggregation method assumed to be used in the analysis. Default is \code{FALSE}.}
@@ -50,6 +55,7 @@ renames the tables, and processes them for narrative automation later on.
 #  table_list = s8_livestock_table_list,
 #  analysis_questions = s8_livestock_questions_list,
 #  response_lookup_df = s8_livestock_response_lookup_df,
+#  survey_year = 2025,
 #  ratio = TRUE,
 #  category = "dairy",
 #  factor = "fps_robust",

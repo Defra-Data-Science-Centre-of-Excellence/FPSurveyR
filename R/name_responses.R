@@ -67,6 +67,9 @@ fps_response_lookup_as_df <- function(.data, ratio = FALSE) {
 #'   table names in `table_list`).
 #' @param response_lookup_df A data frame mapping response codes to
 #'   human-readable names, including a "question" column.
+#' @param survey_year Numeric. Defaults to the current system year (e.g. 2025).
+#'   This will be appended to the output table so that data can be distinguished
+#'   when adding to the time series later on.
 #' @param ratio Logical. If `TRUE`, use "ratio" instead of "mean" as the
 #'   aggregation method assumed to be used in the analysis. Default is `FALSE`.
 #' @param category Character. The category to filter by (e.g. "All farms").
@@ -85,6 +88,7 @@ fps_response_lookup_as_df <- function(.data, ratio = FALSE) {
 #' #  table_list = s8_livestock_table_list,
 #' #  analysis_questions = s8_livestock_questions_list,
 #' #  response_lookup_df = s8_livestock_response_lookup_df,
+#' #  survey_year = 2025,
 #' #  ratio = TRUE,
 #' #  category = "dairy",
 #' #  factor = "fps_robust",
@@ -94,6 +98,7 @@ fps_response_lookup_as_df <- function(.data, ratio = FALSE) {
 fps_name_responses <- function(table_list,
                                analysis_questions,
                                response_lookup_df,
+                               survey_year = as.numeric(format(Sys.Date(), "%Y")),
                                ratio = FALSE,
                                category = "All farms",
                                factor = 1,
@@ -128,6 +133,10 @@ fps_name_responses <- function(table_list,
 
   if (!("question" %in% names(response_lookup_df))) {
     cli::cli_abort("`response_lookup_df` must contain a column named 'question'.")
+  }
+
+  if (!is.numeric(survey_year) || length(survey_year) != 1) {
+    cli::cli_abort("`survey_year` must be a single numeric value.")
   }
 
   if (!is.logical(ratio)) {
@@ -189,7 +198,7 @@ fps_name_responses <- function(table_list,
       #pivot data longer for easier access
       tmp_table <-
         tmp_table %>%
-        dplyr::mutate_at(vars(-cat), as.numeric) %>%
+        dplyr::mutate_at(dplyr::vars(-cat), as.numeric) %>%
         tidyr::pivot_longer(-cat, names_to = "var", values_to = "val") %>%
         dplyr::filter(!grepl("nobs", var)) %>%
         tidyr::separate(var, into = c("response", "names"), sep = "_(?=[^_]+$)") %>% #"_(?=[^_]+$)" only matches last underscore in string (i.e. the _ before "mean" or "ratio)
