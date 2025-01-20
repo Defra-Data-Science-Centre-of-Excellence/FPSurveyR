@@ -8,7 +8,8 @@
 [![CRAN
 status](https://www.r-pkg.org/badges/version/FPSurveyR)](https://CRAN.R-project.org/package=FPSurveyR)
 [![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
+
 <!-- badges: end -->
 
 This package contains all the required functions for producing the [Farm
@@ -39,4 +40,12 @@ Load the package:
 library(FPSurveyR)
 ```
 
-TODO: \* Testing \* Add global options?
+TODO:
+
+- Add complex testing
+
+- Add global options?
+
+  - new_qs
+
+  - irregular_qs
