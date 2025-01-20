@@ -10,11 +10,16 @@
 #'   corresponds to a table's latest survey results.
 #' @param questions A character vector of question identifiers to update (e.g.
 #'   "Q17").
+#' @param survey_year Numeric. The year of the latest survey data being added
+#'   (defaults to the current year).
 #' @param timeseries_directory A string specifying the directory path containing
 #'   the time-series CSV files (which should be on the L drive).
-#' @param survey_yr Numeric. The year of the latest survey data being added.
-#' @param write_to_file Logical. If `TRUE`, updated time-series data is written
-#'   back to the original directory. Defaults to `FALSE`.
+#' @param timeseries_directory A string specifying the directory path of your
+#'   pipeline's outputs folder. Defaults to
+#'   `"example_project/outputs/timeseries/"`
+#' @param write_to_timeseries_directory Logical. If `TRUE`, updated time-series
+#'   data is written back to the original directory to overwrite any existing
+#'   time-series files there. Defaults to `FALSE`.
 #'
 #' @return A named list of updated time-series data frames, where each data
 #'   frame includes both the time-series data and the latest survey data.
@@ -23,27 +28,36 @@
 #' \itemize{
 #'   \item Ensure response option names in the `name_responses` script match the column names in the time-series CSV files.
 #'   \item Time-series CSV filenames should correspond to the question identifiers (e.g., "Q17_exclNA.csv").
+#'   \item If write_to_timeseries_directory is `TRUE`, then any results output will overwrite any files in the time-series directory supplied for the given question.
 #'   }
 #'
 #' @examples
 #' #fps_update_timeseries(
 #' #  tbl_list = s8_livestock_tbl_list,
 #' #  questions = s8_livestock_ts_qs, timeseries_directory = "path/to/timeseries/",
-#' #  survey_yr = 2023, write_to_file = FALSE)
+#' #  survey_year = 2023, write_to_timeseries_directory = FALSE)
 #'
 #' @export
 fps_update_timeseries <- function(tbl_list,
                                   questions,
+                                  survey_year = as.numeric(format(Sys.Date(), "%Y")),
                                   timeseries_directory,
-                                  survey_yr,
-                                  write_to_file = FALSE) {
+                                  output_directory = paste0(here::here("outputs", "timeseries"), "/"),
+                                  write_to_timeseries_directory = FALSE) {
 
   #testing======================================================================
   # tbl_list = s8_livestock_tbl_list
   # questions = s8_livestock_ts_qs
   # timeseries_directory = ts_dir
-  # survey_yr = survey_year
-  # write_to_file = FALSE
+  # survey_year = survey_year
+  # write_to_timeseries_directory = FALSE
+
+  # tbl_list = testing_df
+  # questions = "Q1"
+  # timeseries_directory = temp_dir
+  # survey_year = 2024
+  # write_to_timeseries_directory = FALSE
+  # output_directory <- paste0(tempdir(), "/")
   #validation===================================================================
 
   if (!is.list(tbl_list)) {
@@ -54,16 +68,24 @@ fps_update_timeseries <- function(tbl_list,
     cli::cli_abort("`questions` must be a non-empty character vector.")
   }
 
+  if (!is.numeric(survey_year) || length(survey_year) != 1) {
+    cli::cli_abort("`survey_year` must be a single numeric value.")
+  }
+
   if (!dir.exists(timeseries_directory)) {
     cli::cli_abort("`timeseries_directory` must be a valid directory path.")
   }
 
-  if (!is.numeric(survey_yr) || length(survey_yr) != 1) {
-    cli::cli_abort("`survey_yr` must be a single numeric value.")
+  if (!is.character(output_directory) ||length(output_directory) != 1 ) {
+    cli::cli_abort("`output_directory` must be a character string.")
   }
 
-  if (!is.logical(write_to_file) || length(write_to_file) != 1) {
-    cli::cli_abort("`write_to_file` must be a single logical value.")
+  if(timeseries_directory == output_directory) {
+    cli::cli_abort("`output_directory` must be unique to `timeseries_directory`")
+  }
+
+  if (!is.logical(write_to_timeseries_directory) || length(write_to_timeseries_directory) != 1) {
+    cli::cli_abort("`write_to_timeseries_directory` must be a single logical value.")
   }
 
 
@@ -87,7 +109,7 @@ fps_update_timeseries <- function(tbl_list,
       #backing up original time series in subdirectory before modification
       backup_dir <- paste0(timeseries_directory, "backup/")
       if(!dir.exists(backup_dir)) {
-        dir.create(backup_dir)
+        dir.create(backup_dir, recursive = TRUE)
       }
       readr::write_csv(tmp_ts, paste0(backup_dir, q, ".csv"))
 
@@ -165,23 +187,24 @@ fps_update_timeseries <- function(tbl_list,
     }
 
     #writing to L drive=========================================================
-    if(write_to_file == TRUE) {
+    if(write_to_timeseries_directory == TRUE) {
 
       readr::write_csv(tmp_ts_csv, tmp_fp)
 
-      cli::cli_alert_info(paste0("Time series for ", q, " written to L drive"))
+      cli::cli_alert_info(paste0("Time series for ", q, " written to original time-series directory at: {.file {tmp_fp}}"))
 
 
     }
 
     #writing locally============================================================
-    local_dir <- paste0(here::here("outputs", "timeseries"), "/")
-
-    if(!dir.exists(local_dir)) {
-      dir.create(local_dir)
+    if(!dir.exists(output_directory)) {
+      dir.create(output_directory, recursive = TRUE)
     }
 
-    readr::write_csv(tmp_ts_csv, paste0(local_dir, q, ".csv"))
+    readr::write_csv(tmp_ts_csv, paste0(output_directory, q, ".csv"))
+
+    cli::cli_alert_info(paste0("Time series for ", q, " written at: {.file {output_directory}}."))
+
 
 
     #ADDING BACK IN TO LIST OF TABLES FOR NARRATIVE#############################
@@ -200,7 +223,7 @@ fps_update_timeseries <- function(tbl_list,
 
   }
 
-  cli::cli_alert_success(paste0("Time series for section updated! Outputs can be found in R within `tbl_list`. Outputs are also written to file locally at: ", local_dir))
+  cli::cli_alert_success("Time series for section updated! Outputs can be found in R within `tbl_list`. Outputs are also written to file locally at: {.file {output_directory}}")
 
   return(tmp_tbl_list)
 
