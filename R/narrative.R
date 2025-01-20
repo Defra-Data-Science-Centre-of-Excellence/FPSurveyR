@@ -105,11 +105,11 @@ round_number <- function(val, prefix = NULL, suffix = NULL, big.mark = "") {
 #' @param .data A list of data frames, each representing survey question data.
 #' @param questions A character or numeric vector specifying the question(s) to
 #'   process. Numeric input is automatically converted to "QX" format (e.g.
-#'   "Q4").
+#'   `"Q4"`).
 #' @param response_key A character vector of keywords for the desired
 #'   response(s). Supports regex patterns for filtering responses.
 #' @param svy_year A numeric or character string representing the survey year
-#'   (e.g. "2024").
+#'   (e.g. `2024`).
 #'
 #' @return A string representing the percentage value(s) for the specified
 #'   question(s) and response(s). If multiple responses are provided, their
@@ -131,6 +131,12 @@ round_number <- function(val, prefix = NULL, suffix = NULL, big.mark = "") {
 #'
 #' @export
 get_percent <- function(.data, questions, response_key, svy_year) {
+
+  #testing======================================================================
+  # .data = testing_df
+  # questions = "Q1"
+  # response_key = "with nutrient management"
+  # svy_year = 2024
 
   #validation===================================================================
 
@@ -154,11 +160,11 @@ get_percent <- function(.data, questions, response_key, svy_year) {
     cli::cli_abort("Please supply a valid survey year in the correct format (e.g., '2024').")
   }
 
-  if(any(questions %in% new_qs)) {
-
-    return(paste0("**", questions, " NOT COLLECTED IN SURVEY YEAR**"))
-
-  }
+  # if(any(questions %in% new_qs)) {
+  #
+  #   return(paste0("**", questions, " NOT COLLECTED IN SURVEY YEAR**"))
+  #
+  # }
 
   #ensure question is passed in the format "QX" e.g. "Q4", not "q4" or "4"
   if(is.numeric(questions)) {
@@ -227,11 +233,11 @@ get_percent <- function(.data, questions, response_key, svy_year) {
   #...unless the data are multiple choice - stop the rounding in this case
   if(length(response_key) > 1) {
 
-    if(questions %in% irregular_qs) {
-
-      cli::cli_abort("Please only provide one response_key when using multiple choice data")
-
-    }
+    # if(questions %in% irregular_qs) {
+    #
+    #   cli::cli_abort("Please only provide one response_key when using multiple choice data")
+    #
+    # }
 
     vals <-
       vals %>%
@@ -260,12 +266,12 @@ get_percent <- function(.data, questions, response_key, svy_year) {
 #'
 #' @param .data A list of data frames, each representing survey question data.
 #' @param question A character or numeric value specifying the question to
-#'   process. Numeric input is automatically converted to "QX" format (e.g.,
-#'   "Q4").
+#'   process. Numeric input is automatically converted to "QX" format (e.g.
+#'   `"Q4"`).
 #' @param response_key A character vector of keywords for the desired
 #'   response(s). Supports regex patterns for filtering responses.
 #' @param svy_years A numeric or character vector of length 2 specifying the
-#'   survey years for comparison (e.g., `c(2024, 2023)`).
+#'   survey years for comparison (e.g. `c(2024, 2023)`).
 #' @param past Logical. If `TRUE`, returns past-tense narrative (e.g.
 #'   "increased").
 #' @param abbr Logical. If `TRUE`, returns abbreviated narrative (e.g. "an
@@ -312,11 +318,11 @@ get_doc <- function(.data, question, response_key, svy_years, past = FALSE, abbr
     cli::cli_abort("Please supply two valid survey years only in the format c(YYYY, YYYY).")
   }
 
-  if(question %in% new_qs) {
-
-    return(paste0("**", question, " NOT COLLECTED IN SURVEY YEAR**"))
-
-  }
+  # if(question %in% new_qs) {
+  #
+  #   return(paste0("**", question, " NOT COLLECTED IN SURVEY YEAR**"))
+  #
+  # }
 
   #ensure question is passed in the format "QX" e.g. "Q4", not "q4" or "4"
   if(is.numeric(question)) {
@@ -401,11 +407,11 @@ get_doc <- function(.data, question, response_key, svy_years, past = FALSE, abbr
   #...unless the data are multiple choice (Q35 / Q46) - stop the rounding in this case
   if(length(response_key) > 1) {
 
-    if(question %in% irregular_qs) {
-
-      cli::cli_abort("Please only provide one response_key when using multiple choice data")
-
-    }
+    # if(question %in% irregular_qs) {
+    #
+    #   cli::cli_abort("Please only provide one response_key when using multiple choice data")
+    #
+    # }
 
     vals1 <-
       vals1 %>%
@@ -507,9 +513,9 @@ get_doc <- function(.data, question, response_key, svy_years, past = FALSE, abbr
 #' @param .data A list of data frames, each representing survey question data.
 #' @param questions A character or numeric vector specifying the question(s) to
 #'   process. Numeric input is automatically converted to "QX" format (e.g.
-#'   "Q4").
+#'   `"Q4"`).
 #' @param svy_year A character or numeric value specifying the survey year
-#'   (e.g., `2024` or `"Apr-22"`).
+#'   (e.g. `2024`).
 #' @param ordinal A numeric value specifying the ordinal position (e.g. 1 for
 #'   the most frequent response).
 #' @param get_percent Logical. If `TRUE`, returns the percentage of the selected
@@ -561,10 +567,10 @@ get_name <- function(.data, questions, svy_year, ordinal, get_percent = FALSE, r
     cli::cli_abort("Please supply an ordinal in numeric format (e.g. 1 to get the category that MOST frequently selects a particular response).")
   }
 
-  if(any(questions %in% new_qs)) {
-
-    return(paste0("**", questions, " NOT COLLECTED IN SURVEY YEAR**"))
-  }
+  # if(any(questions %in% new_qs)) {
+  #
+  #   return(paste0("**", questions, " NOT COLLECTED IN SURVEY YEAR**"))
+  # }
 
   #ensure question is passed in the format "QX" e.g. "Q4", not "q4" or "4"
   if(is.numeric(questions)) {

@@ -69,11 +69,11 @@ fps_dodged <- function(.data, questions, svy_years, pivot_from_response = FALSE)
     cli::cli_abort("The survey years provided do not match the available years in the dataset.")
   }
 
-  if(any(questions %in% new_qs)) {
-
-    return(paste0("**", questions, " NOT COLLECTED IN SURVEY YEAR**"))
-
-  }
+  # if(any(questions %in% new_qs)) {
+  #
+  #   return(paste0("**", questions, " NOT COLLECTED IN SURVEY YEAR**"))
+  #
+  # }
 
   #create table=================================================================
 
@@ -174,7 +174,7 @@ fps_stacked <- function(.data, questions, svy_years) {
   }
 
   if (missing(questions) || length(questions) == 0) {
-    cli::cli_abort("Please provide at least one valid question (e.g., 'Q1').")
+    cli::cli_abort("Please provide at least one valid question (e.g. 'Q1').")
   }
 
   invalid_questions <- setdiff(questions, names(.data))
@@ -183,18 +183,18 @@ fps_stacked <- function(.data, questions, svy_years) {
   }
 
   if (missing(svy_years) || length(svy_years) < 1) {
-    cli::cli_abort("Please provide a valid vector of survey years (e.g., c(2020, 2021)).")
+    cli::cli_abort("Please provide a valid vector of survey years (e.g. `c(2020, 2021)`).")
   }
 
   if (!all(svy_years %in% unique(.data[[questions[1]]]$year))) {
     cli::cli_abort("The survey years provided do not match the available years in the dataset.")
   }
 
-  if(any(questions %in% new_qs)) {
-
-    return(paste0("**", questions, " NOT COLLECTED IN SURVEY YEAR**"))
-
-  }
+  # if(any(questions %in% new_qs)) {
+  #
+  #   return(paste0("**", questions, " NOT COLLECTED IN SURVEY YEAR**"))
+  #
+  # }
 
   #create table=================================================================
 
@@ -244,13 +244,13 @@ fps_stacked <- function(.data, questions, svy_years) {
 #'   include columns `year`, `value`, and any variables specified by `yaxis` and
 #'   `fill`.
 #' @param questions A character vector of one or more question identifiers
-#'   (e.g., "Q1", "Q2") to extract and visualize data for. Each identifier must
+#'   (e.g. "Q1", "Q2") to extract and visualize data for. Each identifier must
 #'   match a name in `.data`.
 #' @param years A numeric vector of survey years to include in the chart.
 #' @param yaxis A character string specifying the variable for the y-axis (e.g.
 #'   `"year"` or `"response"`).
 #' @param fill A character string specifying the variable to use for fill colors
-#'   (e.g., `"year"` or `"response"`).
+#'   (e.g. `"year"` or `"response"`).
 #' @param stacked Logical. If `TRUE`, the chart will use a stacked bar format;
 #'   if `FALSE`, it will use a dodged bar format. Defaults to `TRUE`.
 #'
@@ -323,11 +323,11 @@ fps_chart <- function(.data, questions, years, yaxis, fill, stacked = TRUE) {
 
   #get data=====================================================================
 
-  if(any(questions %in% new_qs)) {
-
-    return(paste0("**", questions, " NOT COLLECTED IN SURVEY YEAR**"))
-
-  }
+  # if(any(questions %in% new_qs)) {
+  #
+  #   return(paste0("**", questions, " NOT COLLECTED IN SURVEY YEAR**"))
+  #
+  # }
 
   if(length(questions) > 1) {
 

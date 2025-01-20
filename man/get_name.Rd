@@ -19,10 +19,10 @@ get_name(
 
 \item{questions}{A character or numeric vector specifying the question(s) to
 process. Numeric input is automatically converted to "QX" format (e.g.
-"Q4").}
+\code{"Q4"}).}
 
 \item{svy_year}{A character or numeric value specifying the survey year
-(e.g., \code{2024} or \code{"Apr-22"}).}
+(e.g. \code{2024}).}
 
 \item{ordinal}{A numeric value specifying the ordinal position (e.g. 1 for
 the most frequent response).}

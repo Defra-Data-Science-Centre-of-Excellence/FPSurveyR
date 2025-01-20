@@ -11,13 +11,13 @@ get_percent(.data, questions, response_key, svy_year)
 
 \item{questions}{A character or numeric vector specifying the question(s) to
 process. Numeric input is automatically converted to "QX" format (e.g.
-"Q4").}
+\code{"Q4"}).}
 
 \item{response_key}{A character vector of keywords for the desired
 response(s). Supports regex patterns for filtering responses.}
 
 \item{svy_year}{A numeric or character string representing the survey year
-(e.g. "2024").}
+(e.g. \code{2024}).}
 }
 \value{
 A string representing the percentage value(s) for the specified

@@ -14,7 +14,7 @@ include columns \code{year}, \code{value}, and any variables specified by \code{
 \code{fill}.}
 
 \item{questions}{A character vector of one or more question identifiers
-(e.g., "Q1", "Q2") to extract and visualize data for. Each identifier must
+(e.g. "Q1", "Q2") to extract and visualize data for. Each identifier must
 match a name in \code{.data}.}
 
 \item{years}{A numeric vector of survey years to include in the chart.}
@@ -23,7 +23,7 @@ match a name in \code{.data}.}
 \code{"year"} or \code{"response"}).}
 
 \item{fill}{A character string specifying the variable to use for fill colors
-(e.g., \code{"year"} or \code{"response"}).}
+(e.g. \code{"year"} or \code{"response"}).}
 
 \item{stacked}{Logical. If \code{TRUE}, the chart will use a stacked bar format;
 if \code{FALSE}, it will use a dodged bar format. Defaults to \code{TRUE}.}

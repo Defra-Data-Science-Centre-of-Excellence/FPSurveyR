@@ -19,14 +19,14 @@ get_doc(
 \item{.data}{A list of data frames, each representing survey question data.}
 
 \item{question}{A character or numeric value specifying the question to
-process. Numeric input is automatically converted to "QX" format (e.g.,
-"Q4").}
+process. Numeric input is automatically converted to "QX" format (e.g.
+\code{"Q4"}).}
 
 \item{response_key}{A character vector of keywords for the desired
 response(s). Supports regex patterns for filtering responses.}
 
 \item{svy_years}{A numeric or character vector of length 2 specifying the
-survey years for comparison (e.g., \code{c(2024, 2023)}).}
+survey years for comparison (e.g. \code{c(2024, 2023)}).}
 
 \item{past}{Logical. If \code{TRUE}, returns past-tense narrative (e.g.
 "increased").}
