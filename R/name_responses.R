@@ -72,7 +72,8 @@ fps_response_lookup_as_df <- function(.data, ratio = FALSE) {
 #' @param category Character. The category to filter by (e.g. "All farms").
 #'   Default is `"All farms"`.
 #' @param factor The factor or grouping variable to extract from `table_list`.
-#'   Default is `1` (values are the same across all factors of "All farms").
+#'   Default is `1` which returns the value associated with the 1st factor in
+#'   the table (values are the same across all factors of "All farms").
 #' @param rename Logical or character. If `TRUE`, attempts to rename the tables
 #'   based on extracted response patterns. If a character string, uses it as the
 #'   new name. Default is `FALSE`.

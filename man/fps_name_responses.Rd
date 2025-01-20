@@ -30,7 +30,8 @@ aggregation method assumed to be used in the analysis. Default is \code{FALSE}.}
 Default is \code{"All farms"}.}
 
 \item{factor}{The factor or grouping variable to extract from \code{table_list}.
-Default is \code{1} (values are the same across all factors of "All farms").}
+Default is \code{1} which returns the value associated with the 1st factor in
+the table (values are the same across all factors of "All farms").}
 
 \item{rename}{Logical or character. If \code{TRUE}, attempts to rename the tables
 based on extracted response patterns. If a character string, uses it as the
