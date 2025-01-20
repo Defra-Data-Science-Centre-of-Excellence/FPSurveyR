@@ -40,28 +40,28 @@ testing_fcts_adhoc_lvl <- list(Q4 = c("1" = "I created the plan myself without a
 #fps_process_factors############################################################
 testthat::test_that("fps_process_factors produces a list", {
   act <-
-    FPSurveyR::fps_process_factors(testing_svy,
-                                   question = "Q1",
-                                   factors = testing_fcts,
-                                   factors_list = testing_fcts_lvl)
+    fps_process_factors(testing_svy,
+                        question = "Q1",
+                        factors = testing_fcts,
+                        factors_list = testing_fcts_lvl)
   testthat::expect_type(act, "list")
 })
 
 testthat::test_that("fps_process_factors produces a list with elements of the correct class", {
   act <-
-    FPSurveyR::fps_process_factors(testing_svy,
-                                   question = "Q1",
-                                   factors = testing_fcts,
-                                   factors_list = testing_fcts_lvl)
+    fps_process_factors(testing_svy,
+                        question = "Q1",
+                        factors = testing_fcts,
+                        factors_list = testing_fcts_lvl)
   testthat::expect_equal(unname(sapply(act, class)), c("data.frame", "character", "list", "list"))
 })
 
 testthat::test_that("fps_process_factors removes missing factors from the factors list", {
   act <-
-    FPSurveyR::fps_process_factors(testing_svy,
-                                   question = "Q1",
-                                   factors = testing_fcts,
-                                   factors_list = testing_fcts_lvl)$factors_list$fps_robust
+    fps_process_factors(testing_svy,
+                        question = "Q1",
+                        factors = testing_fcts,
+                        factors_list = testing_fcts_lvl)$factors_list$fps_robust
   exp <-
     c("Pigs and poultry",
       "Dairy",
@@ -71,12 +71,12 @@ testthat::test_that("fps_process_factors removes missing factors from the factor
 
 testthat::test_that("fps_process_factors removes missing adhoc factors from the factors list", {
   act <-
-    FPSurveyR::fps_process_factors(testing_svy,
-                                   question = "Q7",
-                                   factors = testing_fcts,
-                                   factors_list = testing_fcts_lvl,
-                                   adhoc_factors_list = testing_fcts_adhoc,
-                                   adhoc_factors_levels_list = testing_fcts_adhoc_lvl)$factors_list$Q4
+    fps_process_factors(testing_svy,
+                        question = "Q7",
+                        factors = testing_fcts,
+                        factors_list = testing_fcts_lvl,
+                        adhoc_factors_list = testing_fcts_adhoc,
+                        adhoc_factors_levels_list = testing_fcts_adhoc_lvl)$factors_list$Q4
   exp <-
     c("I created the plan myself without advice",
       "The plan was created by an adviser")
@@ -85,12 +85,12 @@ testthat::test_that("fps_process_factors removes missing adhoc factors from the 
 
 testthat::test_that("fps_process_factors formats adhoc factors in the data correctly", {
   act <-
-    FPSurveyR::fps_process_factors(testing_svy,
-                                   question = "Q7",
-                                   factors = testing_fcts,
-                                   factors_list = testing_fcts_lvl,
-                                   adhoc_factors_list = testing_fcts_adhoc,
-                                   adhoc_factors_levels_list = testing_fcts_adhoc_lvl)$data$Q4 %>%
+    fps_process_factors(testing_svy,
+                        question = "Q7",
+                        factors = testing_fcts,
+                        factors_list = testing_fcts_lvl,
+                        adhoc_factors_list = testing_fcts_adhoc,
+                        adhoc_factors_levels_list = testing_fcts_adhoc_lvl)$data$Q4 %>%
     as.character()
   exp <-
     factor(c("I created the plan myself without advice",
@@ -105,9 +105,9 @@ testthat::test_that("fps_process_factors formats adhoc factors in the data corre
 testthat::test_that("fps_analyse_by_factor calculates output correctly in the format expected: means", {
   options(survey.lonely.psu ="remove")
   act <-
-    FPSurveyR::fps_analyse_by_factor(design = testing_dsn,
-                                     factor = "fps_slr_name",
-                                     variable = "Q1_1") %>%
+    fps_analyse_by_factor(design = testing_dsn,
+                          factor = "fps_slr_name",
+                          variable = "Q1_1") %>%
     dplyr::mutate(dplyr::across( dplyr::where(is.numeric), ~ round(., digits = 3) ))
 
   exp <-
@@ -122,9 +122,9 @@ testthat::test_that("fps_analyse_by_factor calculates output correctly in the fo
 testthat::test_that("fps_analyse_by_factor calculates output correctly in the format expected: means (answered Q)", {
   options(survey.lonely.psu ="remove")
   act <-
-    FPSurveyR::fps_analyse_by_factor(design = testing_dsn,
-                                     factor = "fps_slr_name",
-                                     variable = "answered_Q1") %>%
+    fps_analyse_by_factor(design = testing_dsn,
+                          factor = "fps_slr_name",
+                          variable = "answered_Q1") %>%
     dplyr::mutate(dplyr::across( dplyr::where(is.numeric), ~ round(., digits = 3) ))
 
   exp <-
@@ -139,11 +139,11 @@ testthat::test_that("fps_analyse_by_factor calculates output correctly in the fo
 testthat::test_that("fps_analyse_by_factor calculates output correctly in the format expected: ratios", {
   options(survey.lonely.psu ="remove")
   act <-
-    FPSurveyR::fps_analyse_by_factor(design = testing_dsn,
-                                     factor = "fps_slr_name",
-                                     variable = "Q1_1_h10",
-                                     denominator = "h10",
-                                     ratio = TRUE) %>%
+    fps_analyse_by_factor(design = testing_dsn,
+                          factor = "fps_slr_name",
+                          variable = "Q1_1_h10",
+                          denominator = "h10",
+                          ratio = TRUE) %>%
     dplyr::mutate(dplyr::across( dplyr::where(is.numeric), ~ round(., digits = 3) ))
 
   exp <-
@@ -159,12 +159,12 @@ testthat::test_that("fps_analyse_by_factor calculates output correctly in the fo
 testthat::test_that("fps_prepare_results formats the output correctly and fps_read_excel_allsheets reads the data back in", {
   options(survey.lonely.psu ="remove")
   tmp_file <- tempfile(fileext = ".xlsx")
-  FPSurveyR::fps_prepare_results(design = testing_dsn,
-                                 factors = testing_fcts,
-                                 variables = c("answered_Q1", "Q1_1", "Q1_2", "Q1_3"),
-                                 excel_file_path = tmp_file)
+  fps_prepare_results(design = testing_dsn,
+                      factors = testing_fcts,
+                      variables = c("answered_Q1", "Q1_1", "Q1_2", "Q1_3"),
+                      excel_file_path = tmp_file)
   act <-
-    FPSurveyR::fps_read_excel_allsheets(tmp_file)$fps_slr_name %>%
+    fps_read_excel_allsheets(tmp_file)$fps_slr_name %>%
     dplyr::mutate(dplyr::across( dplyr::where(is.numeric), ~ round(., digits = 3) ))
 
   exp <-
@@ -207,10 +207,10 @@ testthat::test_that("fps_add_empty_factors adds NA rows for missing factors", {
                Q1_1_ci = c(0, 0.399, 0.175),
                Q1_2_ci = c(0, 0, 0),
                Q1_3_ci = c(0, 0.399, 0.175))
-  act <- FPSurveyR::fps_add_empty_factors(testing_res,
-                                          factor_col = "cat",
-                                          factor = "fps_slr_name",
-                                          factors_list_full = testing_fcts_lvl)
+  act <- fps_add_empty_factors(testing_res,
+                               factor_col = "cat",
+                               factor = "fps_slr_name",
+                               factors_list_full = testing_fcts_lvl)
   exp <-
     data.frame(cat = c("Small", "Medium", "Large", "All farms"),
                answered_Q1_mean = c(1, 1, NA, 1),
@@ -237,11 +237,11 @@ testthat::test_that("fps_analysis: everything must work as a whole - Q1 means", 
   tmp_dir_tbl <- tempdir()
 
   act <-
-    FPSurveyR::fps_analysis(testing_svy,
-                            questions_list = list("Q1" = c("answered_Q1", "Q1_1", "Q1_2", "Q1_3")),
-                            standard_factors_list = testing_fcts_lvl,
-                            results_fp = tmp_dir_res,
-                            tables_fp = tmp_dir_tbl)$Q1$fps_slr_name %>%
+    fps_analysis(testing_svy,
+                 questions_list = list("Q1" = c("answered_Q1", "Q1_1", "Q1_2", "Q1_3")),
+                 standard_factors_list = testing_fcts_lvl,
+                 results_fp = tmp_dir_res,
+                 tables_fp = tmp_dir_tbl)$Q1$fps_slr_name %>%
     dplyr::mutate(dplyr::across( dplyr::where(is.numeric), ~ round(., digits = 3) ))
 
   exp <-
