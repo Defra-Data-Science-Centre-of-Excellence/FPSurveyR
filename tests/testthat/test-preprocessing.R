@@ -15,11 +15,11 @@ testing_pop <-
 
 #fps_format_factors#############################################################
 act1 <-
-  fps_format_factors(testing_svy,
-                     region_col = "region",
-                     farm_size_col = "size",
-                     farm_type_col = "type",
-                     strat_col = "strata")
+  FPSurveyR::fps_format_factors(testing_svy,
+                                region_col = "region",
+                                farm_size_col = "size",
+                                farm_type_col = "type",
+                                strat_col = "strata")
 
 testthat::test_that("fps_format_factors produces data frame", {
   testthat::expect_s3_class(act1, "data.frame")
@@ -41,11 +41,11 @@ testthat::test_that("fps_format_factors formats strata as character", {
 })
 
 #fps_calc_weights###############################################################
-act2 <- fps_calc_weights(act1,
-                         testing_pop,
-                         pop_col = "population",
-                         unique_ref_col = "cph_no",
-                         join_col = "post_strat")
+act2 <- FPSurveyR::fps_calc_weights(act1,
+                                    testing_pop,
+                                    pop_col = "population",
+                                    unique_ref_col = "cph_no",
+                                    join_col = "post_strat")
 
 testthat::test_that("fps_calc_weights produces data frame", {
   testthat::expect_s3_class(act2, "data.frame")
