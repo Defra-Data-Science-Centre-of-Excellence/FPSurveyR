@@ -28,10 +28,9 @@ testthat::test_that("fps_remove_no_column can remove 'No' and combine questions 
     )
 
   act <-
-    fps_remove_no_column(
-      table_list = testing_tbl_list,
-      questions = c("Q9_exclNA"),
-      questions_to_combine_list = list("Q9_exclNA" = "Q13_exclNA"))$Q9xQ13$fps_slr_name
+    FPSurveyR::fps_remove_no_column(table_list = testing_tbl_list,
+                                    questions = c("Q9_exclNA"),
+                                    questions_to_combine_list = list("Q9_exclNA" = "Q13_exclNA"))$Q9xQ13$fps_slr_name
 
   exp <-
     data.frame(
@@ -56,9 +55,19 @@ testthat::test_that("fps_remove_no_column can remove 'No' and combine questions 
 
 testthat::test_that("fps_update_dataset adds data to the dataset template correctly, and that fps_write_dataset can write it to be read in again", {
 
-  # testing_wb <- openxlsx::loadWorkbook(file.path(getwd(), "tests", "testthat", "testdata", "fps-ghg-dataset-template.xlsx"))
-  # saveRDS(testing_wb, file = "./tests/testthat/testdata/test_dataset.rds")
-  testing_wb <- readRDS(system.file("../tests/testthat/testdata/test_dataset.rds", package = "FPSurveyR"))
+  #conditionally load depending on whether code is being run line by line in interactive session, or sourced in (e.g. as a unit test):
+  #interactive
+  if (sys.nframe() == 0 && interactive() == TRUE) {
+
+    testing_wb <- openxlsx::loadWorkbook(file.path(getwd(), "tests", "testthat", "testdata", "fps-ghg-dataset-template.xlsx"))
+    # saveRDS(testing_wb, file = "./tests/testthat/testdata/test_dataset.rds")
+
+  #unit test
+  } else {
+
+    testing_wb <- readRDS(system.file("../tests/testthat/testdata/test_dataset.rds", package = "FPSurveyR"))
+  }
+
   testing_res <-
     list(
       Q1 = list(fps_slr_name = data.frame(
@@ -76,18 +85,18 @@ testthat::test_that("fps_update_dataset adds data to the dataset template correc
   testing_fcts_lvl <-
     list(fps_slr_name = c("Small", "Medium", "Large"))
 
-  fps_update_dataset(table_list = testing_res,
-                     questions = "Q1",
-                     standard_factors_list = testing_fcts_lvl,
-                     workbook = testing_wb,
-                     sheet = "Nutrient_Management_-_Holdings",
-                     rownum_list = list(c(7, 12, 22)),
-                     special_qs =  c("Q3", "Q4a", "Q4b", "Q7", "Q8", "Q21", "Q9xQ13"))
+  FPSurveyR::fps_update_dataset(table_list = testing_res,
+                                questions = "Q1",
+                                standard_factors_list = testing_fcts_lvl,
+                                workbook = testing_wb,
+                                sheet = "Nutrient_Management_-_Holdings",
+                                rownum_list = list(c(7, 12, 22)),
+                                special_qs =  c("Q3", "Q4a", "Q4b", "Q7", "Q8", "Q21", "Q9xQ13"))
   temp_dir <- tempdir()
-  fps_write_dataset(out_dir = paste0(temp_dir, "/"),
-                    workbook = testing_wb,
-                    delete = FALSE,
-                    date = tolower(format(Sys.Date(), "%d%b%y")))
+  FPSurveyR::fps_write_dataset(out_dir = paste0(temp_dir, "/"),
+                               workbook = testing_wb,
+                               delete = FALSE,
+                               date = tolower(format(Sys.Date(), "%d%b%y")))
 
   act <-
     openxlsx::read.xlsx(paste0(temp_dir, "/", "fps-ghg-dataset-", tolower(format(Sys.Date(), "%d%b%y")), ".xlsx"),
