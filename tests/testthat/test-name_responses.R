@@ -1,5 +1,5 @@
 
-
+#fps_response_lookup_as_df######################################################
 testthat::test_that("fps_response_lookup_as_df: check list of named responses converts to df correctly", {
 
   testing_list <-
@@ -22,7 +22,7 @@ testthat::test_that("fps_response_lookup_as_df: check list of named responses co
   testthat::expect_equal(act, exp)
 })
 
-
+#fps_name_responses#############################################################
 testthat::test_that("fps_name_responses: check data are in correct (tidy) format and are named", {
 
   testing_df <-
