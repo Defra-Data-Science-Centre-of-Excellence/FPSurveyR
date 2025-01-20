@@ -56,7 +56,9 @@ testthat::test_that("fps_remove_no_column can remove 'No' and combine questions 
 
 testthat::test_that("fps_update_dataset adds data to the dataset template correctly, and that fps_write_dataset can write it to be read in again", {
 
-  testing_wb <- openxlsx::loadWorkbook(file.path(getwd(), "tests", "testthat", "testdata", "fps-ghg-dataset-template.xlsx"))
+  # testing_wb <- openxlsx::loadWorkbook(file.path(getwd(), "tests", "testthat", "testdata", "fps-ghg-dataset-template.xlsx"))
+  # saveRDS(testing_wb, file = "./tests/testthat/testdata/test_dataset.rds")
+  testing_wb <- readRDS(system.file("../tests/testthat/testdata/test_dataset.rds", package = "FPSurveyR"))
   testing_res <-
     list(
       Q1 = list(fps_slr_name = data.frame(
