@@ -375,8 +375,8 @@ fps_chart <- function(.data, questions, years, yaxis, fill, stacked = TRUE) {
 
   #set subsidiary vars
   group <- fill
-  sym_fill <- sym(fill)
-  sym_yaxis <- sym(yaxis)
+  sym_fill <- rlang::sym(fill)
+  sym_yaxis <- rlang::sym(yaxis)
 
   #set legend parameters
   legend_breaks <- as.character(levels(.data[[fill]]))
@@ -446,7 +446,7 @@ fps_chart <- function(.data, questions, years, yaxis, fill, stacked = TRUE) {
                                 breaks = brks,
                                 limits = lims,
                                 labels = scales::percent_format(scale = 1)) +
-    ggplot2::scale_y_discrete(expand = expansion(mult = 0, 1/expand_factor), #expand = c(0, 0)
+    ggplot2::scale_y_discrete(expand = ggplot2::expansion(mult = 0, 1/expand_factor), #expand = c(0, 0)
                               labels = scales::label_wrap(35)) + #forces labels to break lines if above a certain character length
     ggplot2::scale_fill_manual(values = DEFRAcolours,
                                breaks = legend_breaks, #order of legend
