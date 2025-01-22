@@ -888,7 +888,6 @@ fps_analysis <- function(.data,
   # adhoc_factors_list = NULL
   # adhoc_factors_levels_list = NULL
 
-
   #validation 1/2===============================================================
 
   if(!is.data.frame(.data)) {
@@ -994,7 +993,7 @@ fps_analysis <- function(.data,
     #stop analysis if tmp_data is empty for a question
     if(nrow(tmp_data) == 0) {
 
-      cli::cli_abort("Analysis error: empty table, filter is not working properly")
+      cli::cli_abort("Analysis error: empty table. Check that {.val {q}} was answered by >= 1 respondent")
 
     }
 
