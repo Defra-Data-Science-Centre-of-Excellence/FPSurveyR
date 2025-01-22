@@ -739,7 +739,7 @@ fps_add_empty_factors <- function(.data,
 
       if(!(c %in% .data[[factor_col]])) {
 
-        cli::cli_alert_warning("Analysis: category {.val {c}} from factor {.val {factor}} is missing from the results - adding row of `NA` values for factor")
+        cli::cli_alert_warning("Analysis: category {.val {c}} from factor {.val {factor}} is missing from the results - adding row of {.val {NA}} values for factor")
 
         index <- which(cats == c)
 
@@ -785,14 +785,14 @@ fps_add_empty_factors <- function(.data,
 #'   assurance and subsequent use in the RAP process.
 #'
 #' @param .data A data frame containing the survey data to be analysed. The data
-#'   frame must include relevant columns for defining the survey design (e.g.,
+#'   frame must include relevant columns for defining the survey design (e.g.
 #'   `cph_no`, `post_strat`, `num_pop`).
 #' @param factor_col A character string specifying the column containing the
 #'   categorical variable(s) used for grouping in the analysis. Defaults to
 #'   `"cat"`. The specified column should exist in `.data`.
 #' @param questions_list A named list where each element corresponds to a survey
 #'   question. Each element must be a character vector consisting of:
-#'   - The question identifier prefixed with `"answered_"` (e.g., `"answered_Q1"`).
+#'   - The question identifier prefixed with `"answered_"` (e.g. `"answered_Q1"`).
 #'   - Response options associated with the question.
 #' @param standard_factors_list A named list of standard factors used for
 #'   grouping analysis. Each element of the list should be a named vector or a
@@ -1098,7 +1098,8 @@ fps_analysis <- function(.data,
   }
 
   cli::cli_alert_success("Analysis done! Outputs can be found in R within the section's `table_list`. Outputs are also written to file locally at: {.path {tables_fp}}.")
-  cli::cli_alert_info("The following questions were analysed: {.val {names(tmp_table_list}}")
+  cli::cli_alert_info("The following questions were analysed: {.val {names(tmp_table_list)}}")
+
   return(tmp_table_list)
 
 }
