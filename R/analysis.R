@@ -1098,7 +1098,7 @@ fps_analysis <- function(.data,
   }
 
   cli::cli_alert_success("Analysis done! Outputs can be found in R within the section's `table_list`. Outputs are also written to file locally at: {.path {tables_fp}}.")
-
+  cli::cli_alert_info("The following questions were analysed: {.val {names(tmp_table_list}}")
   return(tmp_table_list)
 
 }
