@@ -18,7 +18,7 @@ fps_analysis(
 }
 \arguments{
 \item{.data}{A data frame containing the survey data to be analysed. The data
-frame must include relevant columns for defining the survey design (e.g.,
+frame must include relevant columns for defining the survey design (e.g.
 \code{cph_no}, \code{post_strat}, \code{num_pop}).}
 
 \item{factor_col}{A character string specifying the column containing the
@@ -28,7 +28,7 @@ categorical variable(s) used for grouping in the analysis. Defaults to
 \item{questions_list}{A named list where each element corresponds to a survey
 question. Each element must be a character vector consisting of:
 \itemize{
-\item The question identifier prefixed with \code{"answered_"} (e.g., \code{"answered_Q1"}).
+\item The question identifier prefixed with \code{"answered_"} (e.g. \code{"answered_Q1"}).
 \item Response options associated with the question.
 }}
 

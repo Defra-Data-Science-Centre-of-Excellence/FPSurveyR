@@ -1,3 +1,90 @@
+#' @title  FPS: Pre-processing: Data to binary
+#' @author Tom Pearson
+#' @description This function dynamically converts specified columns in a dataset to binary indicator columns
+#' based on a named list of question values. For each column, a new binary column is created
+#' for each value in the corresponding vector of options.
+#'
+#' @param .data A data frame containing the input dataset.
+#' @param question_values A named list where the names are column names in the dataset, and
+#' the values are vectors of all possible options for those columns.
+#'
+#' @return A data frame with the original data and additional binary indicator columns (e.g. `"Q1_v1"`).
+#'
+#' @details For character columns, the function uses regular expressions to identify matches.
+#' For numeric columns, direct equality checks are performed. The function assumes all options
+#' provided in `question_values` are exhaustive for the corresponding columns.
+#'
+#' @examples
+#' # s8_data <- data.frame(
+#' #   Q56 = c(1, 2, 3, 4, 5),
+#' #   Q57 = c("1,2", "3,4", "6", "1,3", "6,4")
+#' # )
+#' #
+#' # question_values <- list(
+#' #   Q56 = 1:5, # Exhaustive options for Q56
+#' #   Q57 = 1:6  # Exhaustive options for Q57
+#' # )
+#' #
+#' # fps_data_to_binary(s8_data, question_values)
+#'
+#' @importFrom magrittr %>%
+#' @export
+fps_data_to_binary <- function(.data, question_values) {
+
+  #testing======================================================================
+
+  # .data = s8_data
+  # question_values = s8_questions_cols
+
+  #validation===================================================================
+  if (!is.data.frame(.data)) {
+    cli::cli_abort("`.data` must be a valid data frame.")
+  }
+  if (!is.list(question_values) || length(question_values) == 0) {
+    cli::cli_abort("`questions` must be a non-empty list")
+  }
+  if (any(!(names(question_values) %in% names(.data)))) {
+    cli::cli_abort("`question_values` names must also be found in `.data`")
+  }
+  if (all(!(sapply(question_values, is.numeric)))) {
+    cli::cli_abort("all value vectors in `question_values` must be numeric")
+  }
+
+  #data to binary===============================================================
+
+  for(q_name in names(question_values)) {
+
+    options <- question_values[[q_name]]
+
+    # Dynamically create binary columns for each value option
+    for(option in options) {
+
+      binary_column_name <- paste0(q_name, "_v", option)
+
+      if(binary_column_name %in% colnames(.data)) {
+        cli::cli_abort("New binary column name {.val {binary_column_name}} already exists in the dataset")
+      }
+
+      if(is.character(.data[[q_name]])) {
+
+        .data[[binary_column_name]] <- ifelse(grepl(paste0("\\b", option, "\\b"), as.character(.data[[q_name]])), 1, 0)
+
+      } else if(is.numeric(.data[[q_name]])) {
+
+        .data[[binary_column_name]] <- ifelse(.data[[q_name]] == option, 1, 0)
+
+      }
+    }
+  }
+
+  return(.data)
+
+}
+
+
+
+
+
 #' @title FPS: Pre-processing: Format factors
 #' @author Tom Pearson
 #' @description This function formats the factor variables in a dataset based on
