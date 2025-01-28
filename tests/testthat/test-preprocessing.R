@@ -5,19 +5,30 @@ testthat::test_that("fps_data_to_binary formats data correctly", {
     data.frame(
       cph_no = c(70000001, 60000001, 40000001, 50000001),
       Q1 = c(1, 3, 2, 1),
-      Q1_2 = c("3,2", "1", "1,2", "3")
+      Q1_2 = c("3,2", "1", "1,2", "3"),
+      Q2 = c(10, 25, 50, 1),
+      Q3 = c("example1", "example2", "example3", "example4"),
+      Q4 = c("example5", "example6", "example7", "example8")
     )
 
   testing_qvals <-
     list("Q1" = 1:3,
-         "Q1_2" = 1:3)
+         "Q1_2" = 1:3,
+         "Q2" = c(),
+         #Q3
+         "Q4" = c())
 
-  act <- fps_data_to_binary(testing_df, testing_qvals)
+  act <- fps_data_to_binary(testing_df,
+                            question_values = testing_qvals,
+                            nonbinary_questions = "Q2")
 
   exp <- data.frame(
     cph_no = c(70000001, 60000001, 40000001, 50000001),
     Q1 = c(1, 3, 2, 1),
     Q1_2 = c("3,2", "1", "1,2", "3"),
+    Q2 = c(10, 25, 50, 1),
+    Q3 = c("example1", "example2", "example3", "example4"),
+    Q4 = c("example5", "example6", "example7", "example8"),
 
     Q1_v1 = c(1, 0, 0, 1),
     Q1_v2 = c(0, 0, 1, 0),

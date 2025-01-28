@@ -4,39 +4,51 @@
 \alias{fps_data_to_binary}
 \title{FPS: Pre-processing: Data to binary}
 \usage{
-fps_data_to_binary(.data, question_values)
+fps_data_to_binary(.data, question_values, nonbinary_questions = NULL)
 }
 \arguments{
 \item{.data}{A data frame containing the input dataset.}
 
-\item{question_values}{A named list where the names are column names in the dataset, and
-the values are vectors of all possible options for those columns.}
+\item{question_values}{A named list where the names are column names in the
+dataset, and the values are numeric vectors of all possible options for
+those columns. If the question is non-binary, then an empty vector or \code{NULL}
+must be provided.}
+
+\item{nonbinary_questions}{A character vector of questions to exclude from
+processing to binary (e.g. \code{"Q1_TEXT"}). Default is \code{NULL}.}
 }
 \value{
-A data frame with the original data and additional binary indicator columns (e.g. \code{"Q1_v1"}).
+A data frame with the original data and additional binary indicator
+columns (e.g. \code{"Q1_v1"}).
 }
 \description{
-This function dynamically converts specified columns in a dataset to binary indicator columns
-based on a named list of question values. For each column, a new binary column is created
-for each value in the corresponding vector of options.
+This function dynamically converts specified columns in a
+dataset to binary indicator columns based on a named list of question
+values. For each column, a new binary column is created for each value in
+the corresponding vector of options.
 }
 \details{
-For character columns, the function uses regular expressions to identify matches.
-For numeric columns, direct equality checks are performed. The function assumes all options
-provided in \code{question_values} are exhaustive for the corresponding columns.
+For character columns, the function uses regular expressions to
+identify matches. For numeric columns, direct equality checks are
+performed. The function assumes all options provided in \code{question_values}
+are exhaustive for the corresponding columns.
 }
 \examples{
 # s8_data <- data.frame(
 #   Q56 = c(1, 2, 3, 4, 5),
-#   Q57 = c("1,2", "3,4", "6", "1,3", "6,4")
+#   Q57 = c("1,2", "3,4", "6", "1,3", "6,4"),
+#   Q57_TEXT = c("example1", "example2", "example3", "example4", "example5"),
+#   Q58 = c(10, 25, 50, 1, 10)
 # )
 #
 # question_values <- list(
 #   Q56 = 1:5, # Exhaustive options for Q56
-#   Q57 = 1:6  # Exhaustive options for Q57
+#   Q57 = 1:6,  # Exhaustive options for Q57
+#   Q57_TEXT = c(),
+#   Q58 = c()
 # )
 #
-# fps_data_to_binary(s8_data, question_values)
+# fps_data_to_binary(s8_data, question_values, nonbinary_questions = c("Q57_TEXT", "Q58"))
 
 }
 \author{
