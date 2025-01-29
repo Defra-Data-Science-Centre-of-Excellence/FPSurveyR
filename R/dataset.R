@@ -37,6 +37,8 @@ fps_remove_no_column <- function(table_list, questions, questions_to_combine_lis
   # questions = s1_land_remove_no_q
   # questions_to_combine_list = list("Q9_exclNA" = "Q13_exclNA")
 
+  # table_list = s5_table_list
+  # questions = s5_remove_no_q
 
   #validation===================================================================
   if (!is.list(table_list)) {
@@ -97,9 +99,9 @@ fps_remove_no_column <- function(table_list, questions, questions_to_combine_lis
         tmp_table_list[[q]][[f]] %>%
         #removes second response for responses cols only (should be No always)
         dplyr::select(cat,
-                      dplyr::matches("_1_([a-zA-Z]*_)?(mean|ratio)$"), #matches cols ending with _1 followed by an _[optional alpha-string] and finally _ratio or _mean
+                      dplyr::matches("_v1_([a-zA-Z]*_)?(mean|ratio)$"), #matches cols ending with _1 followed by an _[optional alpha-string] and finally _ratio or _mean
                       dplyr::ends_with("_nobs"), #matches cols ending with _nobs
-                      dplyr::matches("_1_([a-zA-Z]*_)?ci$")) %>% #matches cols ending with _1 followed by an _[optional alpha-string] and finally _ci
+                      dplyr::matches("_v1_([a-zA-Z]*_)?ci$")) %>% #matches cols ending with _1 followed by an _[optional alpha-string] and finally _ci
         dplyr::relocate(dplyr::ends_with("_ci"), .after = dplyr::last_col())
 
       if(ncol(tmp_data) > 4) {
@@ -118,9 +120,9 @@ fps_remove_no_column <- function(table_list, questions, questions_to_combine_lis
           tmp_table_list[[q2]][[f]] %>%
           #removes second response for responses cols only (should be No always)
           dplyr::select(cat,
-                        dplyr::matches("_1_([a-zA-Z]*_)?(mean|ratio)$"),
+                        dplyr::matches("_v1_([a-zA-Z]*_)?(mean|ratio)$"),
                         dplyr::ends_with("_nobs"),
-                        dplyr::matches("_1_([a-zA-Z]*_)?ci$")) %>%
+                        dplyr::matches("_v1_([a-zA-Z]*_)?ci$")) %>%
           dplyr::relocate(dplyr::ends_with("_ci"), .after = dplyr::last_col())
 
         if(ncol(tmp_data_q2) > 4) {
@@ -129,12 +131,12 @@ fps_remove_no_column <- function(table_list, questions, questions_to_combine_lis
 
         yes_ans_col <-
           tmp_data %>%
-          dplyr::select(dplyr::matches("_1_([a-zA-Z]*_)?(mean|ratio)$")) %>%
+          dplyr::select(dplyr::matches("_v1_([a-zA-Z]*_)?(mean|ratio)$")) %>%
           names() %>%
           rlang::sym()
         yes_ans_col_q2 <-
           tmp_data_q2 %>%
-          dplyr::select(dplyr::matches("_1_([a-zA-Z]*_)?(mean|ratio)$")) %>%
+          dplyr::select(dplyr::matches("_v1_([a-zA-Z]*_)?(mean|ratio)$")) %>%
           names() %>%
           rlang::sym()
 
@@ -516,7 +518,7 @@ fps_update_dataset <- function(table_list, questions, standard_factors_list,
   }
 
   cli::cli_alert_success("Dataset for section updated!")
-  cli::cli_alert_info("Note that the XLSX is not yet written to file - this is done in the master file by running {.fn {'openxlsx::saveWorkbook'}} once the tables for every section have been updated")
+  cli::cli_alert_info("Note that the XLSX is not yet written to file - this is done in the master file by running {.fn {'FPSurveyR::fps_write_dataset'}} once the tables for every section have been updated")
 
 
 }
