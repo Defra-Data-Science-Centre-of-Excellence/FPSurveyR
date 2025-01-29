@@ -59,7 +59,8 @@ fps_data_to_binary <- function(.data, question_values, nonbinary_questions = NUL
     cli::cli_abort("`questions` must be a non-empty list")
   }
   if (any(!(names(question_values) %in% names(.data)))) {
-    cli::cli_abort("`question_values` names must also be found in `.data`")
+    missing_qs <- names(question_values[!(names(question_values) %in% names(.data))])
+    cli::cli_abort("`question_values` names must be found in `.data`. Check {.val {missing_qs}} is in `.data`.")
   }
   if (!is.null(nonbinary_questions) && !is.character(nonbinary_questions)) {
     cli::cli_abort("`nonbinary_questions` must be a character vector")
