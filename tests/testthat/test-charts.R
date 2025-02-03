@@ -33,6 +33,16 @@ testthat::test_that("fps_dodged formats table correctly", {
   testthat::expect_equal(act, exp)
 })
 
+testthat::test_that("fps_dodged outputs missing questions message correctly", {
+
+  act <- fps_dodged(testing_df,
+                    questions = "Q2",
+                    svy_years = 2023)
+
+  exp <- "**The following questions are not in `.data`: Q2**"
+
+  testthat::expect_equal(act, exp)
+})
 
 #fps_stacked#####################################################################
 
@@ -55,6 +65,44 @@ testthat::test_that("fps_stacked formats table correctly", {
                                "Not applicable",
                                "Total"))
 
+
+  testthat::expect_equal(act, exp)
+})
+
+testthat::test_that("fps_stacked outputs missing questions message correctly", {
+
+  act <- fps_stacked(testing_df,
+                     questions = "Q2",
+                     svy_years = 2023)
+
+  exp <- "**The following questions are not in `.data`: Q2**"
+
+  testthat::expect_equal(act, exp)
+})
+
+#fps_chart######################################################################
+
+testthat::test_that("fps_chart outputs a ggplot2 object when inputs are valid", {
+
+  act <- fps_chart(testing_df,
+                   questions = "Q1",
+                   years = c(2022, 2023),
+                   yaxis = "year",
+                   fill = "response")
+
+  testthat::expect_s3_class(act, "ggplot")
+})
+
+
+testthat::test_that("fps_chart outputs missing questions message correctly", {
+
+  act <- fps_chart(testing_df,
+                   questions = "Q2",
+                   years = c(2022, 2023),
+                   yaxis = "year",
+                   fill = "response")
+
+  exp <- "**The following questions are not in `.data`: Q2**"
 
   testthat::expect_equal(act, exp)
 })
