@@ -62,6 +62,18 @@ testthat::test_that("get_percent adds percents correctly", {
   testthat::expect_equal(act, exp)
 })
 
+testthat::test_that("get_percent outputs missing questions message correctly", {
+
+  act <- get_percent(testing_df,
+                     questions = "Q2",
+                     response_key = "self-funded",
+                     svy_year = 2024)
+
+  exp <- "**The following questions are not in `.data`: Q2**"
+
+  testthat::expect_equal(act, exp)
+})
+
 #get_percent####################################################################
 
 testthat::test_that("get_doc extracts DOC wording correctly: present tense, long", {
@@ -113,6 +125,18 @@ testthat::test_that("get_doc processes multiple responses correctly", {
                  get_pc = TRUE)
 
   exp <- "5%"
+
+  testthat::expect_equal(act, exp)
+})
+
+testthat::test_that("get_doc outputs missing questions message correctly", {
+
+  act <- get_doc(testing_df,
+                 question = "Q2",
+                 response_key = "self-funded",
+                 svy_years = c(2023, 2024))
+
+  exp <- "**The following questions are not in `.data`: Q2**"
 
   testthat::expect_equal(act, exp)
 })
@@ -178,6 +202,19 @@ testthat::test_that("get_name extracts percent correctly", {
                    responses_to_exclude = "without")
 
   exp <- "31%"
+
+  testthat::expect_equal(act, exp)
+})
+
+
+testthat::test_that("get_name outputs missing questions message correctly", {
+
+  act <- get_name(testing_df,
+                  questions = "Q2",
+                  ordinal = 1,
+                  svy_year = 2024)
+
+  exp <- "**The following questions are not in `.data`: Q2**"
 
   testthat::expect_equal(act, exp)
 })

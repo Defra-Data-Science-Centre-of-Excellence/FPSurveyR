@@ -10,7 +10,6 @@ fps_update_dataset(
   standard_factors_list,
   workbook,
   sheet,
-  rownum_list,
   special_qs,
   adhoc_factors_list = NULL,
   adhoc_factors_levels_list = NULL,
@@ -21,8 +20,10 @@ fps_update_dataset(
 \item{table_list}{A named list of data tables. Each table contains the
 results for a specific question and factor.}
 
-\item{questions}{A character vector of question names corresponding to tables
-in \code{table_list}.}
+\item{questions}{A named list of row number vectors. Each element's
+name (e.g. \code{"Q1"}) should correspond to a question in \code{table_list}. Each row number value
+corresponds to the first row of the table in the dataset template that each
+question’s data (for each factor) should be inserted.}
 
 \item{standard_factors_list}{A named list of factors and their corresponding
 levels for standard questions.}
@@ -31,9 +32,6 @@ levels for standard questions.}
 
 \item{sheet}{A character string specifying the name of the worksheet where
 the data will be written.}
-
-\item{rownum_list}{A list of row numbers where each question’s data should be
-inserted in the worksheet.}
 
 \item{special_qs}{A character vector of question names that require special
 validation handling.}
@@ -58,7 +56,7 @@ a specific worksheet at specific row positions in the workbook. Ad-hoc
 factors can be added to customize the processing for specific questions.
 }
 \examples{
-#fps_update_dataset(table_list, questions, standard_factors_list, workbook, "Sheet1", rownum_list, special_qs)
+#fps_update_dataset(table_list, questions, standard_factors_list, workbook, "Sheet1", special_qs)
 
 }
 \seealso{

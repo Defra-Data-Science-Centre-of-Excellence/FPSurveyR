@@ -170,6 +170,15 @@ get_percent <- function(.data, questions, response_key, svy_year) {
   if(is.numeric(questions)) {
     questions <- toupper(paste0("Q", questions))
   }
+
+
+  if (!all(questions %in% names(.data))) {
+    rtn_missing_qs <- (paste0("**", "The following questions are not in `.data`: ",
+                              paste(questions[!(questions %in% names(.data))], collapse = ", "), "**"))
+    return(rtn_missing_qs)
+  }
+
+
   response_key <- tolower(response_key)
   response_key <-  gsub("([()])", "\\\\\\1", response_key) #adding "\\" to any parentheses found in the response key - to escape the parentheses as reserved characters
   svy_year <- as.character(svy_year)
@@ -328,8 +337,13 @@ get_doc <- function(.data, question, response_key, svy_years, past = FALSE, abbr
   if(is.numeric(question)) {
     question <- toupper(paste0("Q", question))
   }
-  # question <- paste0(toupper(substr(question, 1, 1)),
-  #                    tolower(substr(question, 2, nchar(question))))
+
+  if (!all(question %in% names(.data))) {
+    rtn_missing_qs <- (paste0("**", "The following questions are not in `.data`: ",
+                              paste(question[!(question %in% names(.data))], collapse = ", "), "**"))
+    return(rtn_missing_qs)
+  }
+
   response_key <- tolower(response_key)
   response_key <-  gsub("([()])", "\\\\\\1", response_key) #adding "\\" to any parentheses found in the response key - to escape the parentheses as reserved characters
 
@@ -576,6 +590,13 @@ get_name <- function(.data, questions, svy_year, ordinal, get_percent = FALSE, r
   if(is.numeric(questions)) {
     questions <- toupper(paste0("Q", questions))
   }
+
+  if (!all(questions %in% names(.data))) {
+    rtn_missing_qs <- (paste0("**", "The following questions are not in `.data`: ",
+                              paste(questions[!(questions %in% names(.data))], collapse = ", "), "**"))
+    return(rtn_missing_qs)
+  }
+
 
   if((is.character(ordinal) & !grepl("last", ordinal, ignore.case = T)) | is.factor(ordinal)) {
     ordinal <- as.numeric(ordinal)

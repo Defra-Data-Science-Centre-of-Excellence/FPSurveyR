@@ -6,44 +6,44 @@ testthat::test_that("fps_remove_no_column can remove 'No' and combine questions 
       Q9_exclNA = list(fps_slr_name = data.frame(
         cat = c("Small", "Medium", "Large", "All farms"),
 
-        Q9_1_mean = c(0.714, 1, 0, 0.313),
-        Q9_2_mean = c(0, 0, 1, 0.597),
+        Q9_v1_mean = c(0.714, 1, 0, 0.313),
+        Q9_v2_mean = c(0, 0, 1, 0.597),
 
         answered_Q9_exclNA_nobs = c(2, 1, 1, 4),
 
-        Q9_1_ci = c(0.399, 0, 0, 0.175),
-        Q9_2_ci = c(0, 0, 0, 0)
+        Q9_v1_ci = c(0.399, 0, 0, 0.175),
+        Q9_v2_ci = c(0, 0, 0, 0)
       )),
       Q13_exclNA = list(fps_slr_name = data.frame(
         cat = c("Small", "Medium", "Large", "All farms"),
 
-        Q13_1_mean = c(0, 0.6, 0, 0.4),
-        Q31_2_mean = c(0.9, 0, 0, 0.7),
+        Q13_v1_mean = c(0, 0.6, 0, 0.4),
+        Q31_v2_mean = c(0.9, 0, 0, 0.7),
 
         answered_Q13_exclNA_nobs = c(2, 1, 1, 4),
 
-        Q13_1_ci = c(0, 0.2, 0, 0.1),
-        Q13_2_ci = c(0.5, 0, 0, 0.3)
+        Q13_v1_ci = c(0, 0.2, 0, 0.1),
+        Q13_v2_ci = c(0.5, 0, 0, 0.3)
       ))
     )
 
   act <-
     fps_remove_no_column(table_list = testing_tbl_list,
-                                    questions = c("Q9_exclNA"),
-                                    questions_to_combine_list = list("Q9_exclNA" = "Q13_exclNA"))$Q9xQ13$fps_slr_name
+                         questions = c("Q9_exclNA"),
+                         questions_to_combine_list = list("Q9_exclNA" = "Q13_exclNA"))$Q9xQ13$fps_slr_name
 
   exp <-
     data.frame(
       cat = c("Small", "Medium", "Large", "All farms"),
 
-      Q9_1_mean = c(0.714, 1, 0, 0.313),
-      Q13_1_mean = c(0, 0.6, 0, 0.4),
+      Q9_v1_mean = c(0.714, 1, 0, 0.313),
+      Q13_v1_mean = c(0, 0.6, 0, 0.4),
 
       answered_Q9_exclNA_nobs = c(2, 1, 1, 4),
       answered_Q13_exclNA_nobs = c(2, 1, 1, 4),
 
-      Q9_1_ci = c(0.399, 0, 0, 0.175),
-      Q13_1_ci = c(0, 0.2, 0, 0.1)
+      Q9_v1_ci = c(0.399, 0, 0, 0.175),
+      Q13_v1_ci = c(0, 0.2, 0, 0.1)
     )
   testthat::expect_equal(act, exp)
 })
@@ -62,7 +62,7 @@ testthat::test_that("fps_update_dataset adds data to the dataset template correc
     testing_wb <- openxlsx::loadWorkbook(file.path(getwd(), "tests", "testthat", "testdata", "fps-ghg-dataset-template.xlsx"))
     # saveRDS(testing_wb, file = "./tests/testthat/testdata/test_dataset.rds")
 
-  #unit test
+    #unit test
   } else {
 
     testing_wb <- readRDS(system.file("../tests/testthat/testdata/test_dataset.rds", package = "FPSurveyR"))
@@ -82,21 +82,24 @@ testthat::test_that("fps_update_dataset adds data to the dataset template correc
         Q1_1_ci = c(0.399, 0, 0, 0.175),
         Q1_2_ci = c(0, 0, 0, 0),
         Q1_3_ci = c(0.399, 0, 0, 0.175))))
+
   testing_fcts_lvl <-
     list(fps_slr_name = c("Small", "Medium", "Large"))
 
+  testing_questions <-
+    list("Q1" = c(7, 12, 22))
+
   fps_update_dataset(table_list = testing_res,
-                                questions = "Q1",
-                                standard_factors_list = testing_fcts_lvl,
-                                workbook = testing_wb,
-                                sheet = "Nutrient_Management_-_Holdings",
-                                rownum_list = list(c(7, 12, 22)),
-                                special_qs =  c("Q3", "Q4a", "Q4b", "Q7", "Q8", "Q21", "Q9xQ13"))
+                     questions = testing_questions,
+                     standard_factors_list = testing_fcts_lvl,
+                     workbook = testing_wb,
+                     sheet = "Nutrient_Management_-_Holdings",
+                     special_qs =  c("Q3", "Q4a", "Q4b", "Q7", "Q8", "Q21", "Q9xQ13"))
   temp_dir <- tempdir()
   fps_write_dataset(out_dir = paste0(temp_dir, "/"),
-                               workbook = testing_wb,
-                               delete = FALSE,
-                               date = tolower(format(Sys.Date(), "%d%b%y")))
+                    workbook = testing_wb,
+                    delete = FALSE,
+                    date = tolower(format(Sys.Date(), "%d%b%y")))
 
   act <-
     openxlsx::read.xlsx(paste0(temp_dir, "/", "fps-ghg-dataset-", tolower(format(Sys.Date(), "%d%b%y")), ".xlsx"),

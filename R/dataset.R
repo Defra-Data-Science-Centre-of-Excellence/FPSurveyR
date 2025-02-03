@@ -37,6 +37,8 @@ fps_remove_no_column <- function(table_list, questions, questions_to_combine_lis
   # questions = s1_land_remove_no_q
   # questions_to_combine_list = list("Q9_exclNA" = "Q13_exclNA")
 
+  # table_list = s5_table_list
+  # questions = s5_remove_no_q
 
   #validation===================================================================
   if (!is.list(table_list)) {
@@ -97,9 +99,9 @@ fps_remove_no_column <- function(table_list, questions, questions_to_combine_lis
         tmp_table_list[[q]][[f]] %>%
         #removes second response for responses cols only (should be No always)
         dplyr::select(cat,
-                      dplyr::matches("_1_([a-zA-Z]*_)?(mean|ratio)$"), #matches cols ending with _1 followed by an _[optional alpha-string] and finally _ratio or _mean
+                      dplyr::matches("_v1_([a-zA-Z]*_)?(mean|ratio)$"), #matches cols ending with _1 followed by an _[optional alpha-string] and finally _ratio or _mean
                       dplyr::ends_with("_nobs"), #matches cols ending with _nobs
-                      dplyr::matches("_1_([a-zA-Z]*_)?ci$")) %>% #matches cols ending with _1 followed by an _[optional alpha-string] and finally _ci
+                      dplyr::matches("_v1_([a-zA-Z]*_)?ci$")) %>% #matches cols ending with _1 followed by an _[optional alpha-string] and finally _ci
         dplyr::relocate(dplyr::ends_with("_ci"), .after = dplyr::last_col())
 
       if(ncol(tmp_data) > 4) {
@@ -118,9 +120,9 @@ fps_remove_no_column <- function(table_list, questions, questions_to_combine_lis
           tmp_table_list[[q2]][[f]] %>%
           #removes second response for responses cols only (should be No always)
           dplyr::select(cat,
-                        dplyr::matches("_1_([a-zA-Z]*_)?(mean|ratio)$"),
+                        dplyr::matches("_v1_([a-zA-Z]*_)?(mean|ratio)$"),
                         dplyr::ends_with("_nobs"),
-                        dplyr::matches("_1_([a-zA-Z]*_)?ci$")) %>%
+                        dplyr::matches("_v1_([a-zA-Z]*_)?ci$")) %>%
           dplyr::relocate(dplyr::ends_with("_ci"), .after = dplyr::last_col())
 
         if(ncol(tmp_data_q2) > 4) {
@@ -129,12 +131,12 @@ fps_remove_no_column <- function(table_list, questions, questions_to_combine_lis
 
         yes_ans_col <-
           tmp_data %>%
-          dplyr::select(dplyr::matches("_1_([a-zA-Z]*_)?(mean|ratio)$")) %>%
+          dplyr::select(dplyr::matches("_v1_([a-zA-Z]*_)?(mean|ratio)$")) %>%
           names() %>%
           rlang::sym()
         yes_ans_col_q2 <-
           tmp_data_q2 %>%
-          dplyr::select(dplyr::matches("_1_([a-zA-Z]*_)?(mean|ratio)$")) %>%
+          dplyr::select(dplyr::matches("_v1_([a-zA-Z]*_)?(mean|ratio)$")) %>%
           names() %>%
           rlang::sym()
 
@@ -284,20 +286,20 @@ fps_make_allfarms_table <- function(table_list, allfarms_lookup_list, ratio = FA
 #' @author Tom Pearson
 #' @description This function processes survey results into a workbook,
 #'   formatting data and performing validation checks before inserting data into
-#'   a specific worksheet at specific row positions in the workbook. Ad-hoc
-#'   factors can be added to customize the processing for specific questions.
+#' a specific worksheet at specific row positions in the workbook. Ad-hoc
+#' factors can be added to customize the processing for specific questions.
 #'
 #' @param table_list A named list of data tables. Each table contains the
 #'   results for a specific question and factor.
-#' @param questions A character vector of question names corresponding to tables
-#'   in `table_list`.
+#' @param questions A named list of row number vectors. Each element's
+#'   name (e.g. `"Q1"`) should correspond to a question in `table_list`. Each row number value
+#'   corresponds to the first row of the table in the dataset template that each
+#'   question’s data (for each factor) should be inserted.
 #' @param standard_factors_list A named list of factors and their corresponding
 #'   levels for standard questions.
 #' @param workbook An `openxlsx` workbook object where the data will be written.
 #' @param sheet A character string specifying the name of the worksheet where
 #'   the data will be written.
-#' @param rownum_list A list of row numbers where each question’s data should be
-#'   inserted in the worksheet.
 #' @param special_qs A character vector of question names that require special
 #'   validation handling.
 #' @param adhoc_factors_list An optional named list of ad-hoc factors to be
@@ -311,13 +313,13 @@ fps_make_allfarms_table <- function(table_list, allfarms_lookup_list, ratio = FA
 #'   separately using \link[openxlsx]{saveWorkbook}.
 #'
 #' @examples
-#' #fps_update_dataset(table_list, questions, standard_factors_list, workbook, "Sheet1", rownum_list, special_qs)
+#' #fps_update_dataset(table_list, questions, standard_factors_list, workbook, "Sheet1", special_qs)
 #'
 #' @seealso \link[openxlsx]{saveWorkbook}
 #'
 #' @export
 fps_update_dataset <- function(table_list, questions, standard_factors_list,
-                               workbook, sheet, rownum_list,
+                               workbook, sheet,
                                special_qs, #multiple choice questions and special questions
                                adhoc_factors_list = NULL, adhoc_factors_levels_list = NULL,
                                ratio = FALSE) {
@@ -333,7 +335,6 @@ fps_update_dataset <- function(table_list, questions, standard_factors_list,
   # special_qs = irregular_qs
   # workbook = wb
   # sheet = s2_sheet
-  # rownum_list = s2_rownum_list
   # ratio = FALSE
   # adhoc_factors_list = NULL
   # adhoc_factors_levels_list = NULL
@@ -345,7 +346,6 @@ fps_update_dataset <- function(table_list, questions, standard_factors_list,
   # adhoc_factors_levels_list = s1_adhoc_factors_levels_list
   # workbook = wb
   # sheet = s1_sheet
-  # rownum_list = s1_rownum_list
   # special_qs = irregular_qs
 
   # table_list = testing_res
@@ -353,7 +353,6 @@ fps_update_dataset <- function(table_list, questions, standard_factors_list,
   # standard_factors_list = testing_fcts_lvl
   # workbook = testing_wb
   # sheet =  "Nutrient_Management_-_Holdings"
-  # rownum_list = list(c(7, 12, 22))
   # special_qs =  c("Q3", "Q4a", "Q4b", "Q7", "Q8", "Q21", "Q9xQ13")
   # ratio = F
 
@@ -361,8 +360,14 @@ fps_update_dataset <- function(table_list, questions, standard_factors_list,
   if (!is.list(table_list) || length(table_list) == 0) {
     cli::cli_abort("`table_list` must be a non-empty named list of data tables.")
   }
-  if (!is.character(questions) || length(questions) == 0) {
-    cli::cli_abort("`questions` must be a non-empty character vector.")
+  if (!is.list(questions) || length(questions) == 0) {
+    cli::cli_abort("`questions` must be a non-empty list")
+  }
+  if (any(!(names(questions) %in% names(table_list)))) {
+    cli::cli_abort("`questions` names must also be found in `table_list`")
+  }
+  if (all(!(sapply(questions, is.numeric)))) {
+    cli::cli_abort("all row number vectors in `questions` must be numeric")
   }
   if (!is.list(standard_factors_list) || length(standard_factors_list) == 0) {
     cli::cli_abort("`standard_factors_list` must be a non-empty named list of factors.")
@@ -372,9 +377,6 @@ fps_update_dataset <- function(table_list, questions, standard_factors_list,
   }
   if (!is.character(sheet) || length(sheet) != 1) {
     cli::cli_abort("`sheet` must be a single character string specifying the worksheet name.")
-  }
-  if (!is.list(rownum_list) || length(rownum_list) != length(questions)) {
-    cli::cli_abort("`rownum_list` must be a list of row numbers matching the length of `questions`.")
   }
   if (!is.character(special_qs)) {
     cli::cli_abort("`special_qs` must be a character vector.")
@@ -395,8 +397,8 @@ fps_update_dataset <- function(table_list, questions, standard_factors_list,
   cli::cli_progress_bar("Update dataset progress", total = length(questions))
   for (i in seq_along(questions)) {
 
-    q <- questions[i]
-    tmp_rownums <- rownum_list[[i]]
+    q <- names(questions[i])
+    tmp_rownums <- questions[[q]]
     tmp_factors <- standard_factors_list
 
     #adding adhoc factors conditional on question
@@ -516,7 +518,7 @@ fps_update_dataset <- function(table_list, questions, standard_factors_list,
   }
 
   cli::cli_alert_success("Dataset for section updated!")
-  cli::cli_alert_info("Note that the XLSX is not yet written to file - this is done in the master file by running {.fn {'openxlsx::saveWorkbook'}} once the tables for every section have been updated")
+  cli::cli_alert_info("Note that the XLSX is not yet written to file - this is done in the master file by running {.fn {'FPSurveyR::fps_write_dataset'}} once the tables for every section have been updated")
 
 
 }
