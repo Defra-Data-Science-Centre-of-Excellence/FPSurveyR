@@ -56,9 +56,10 @@ fps_dodged <- function(.data, questions, svy_years, pivot_from_response = FALSE)
     cli::cli_abort("Please provide at least one valid question (e.g. 'Q1').")
   }
 
-  invalid_questions <- setdiff(questions, names(.data))
-  if (length(invalid_questions) > 0) {
-    cli::cli_abort("The following question(s) are not found in the data: {.value {paste(invalid_questions, collapse = ', ')}}.")
+  if (!all(questions %in% names(.data))) {
+    rtn_missing_qs <- (paste0("**", "The following questions are not in `.data`: ",
+                              paste(questions[!(questions %in% names(.data))], collapse = ", "), "**"))
+    return(rtn_missing_qs)
   }
 
   if (missing(svy_years) || length(svy_years) < 1) {
@@ -177,9 +178,10 @@ fps_stacked <- function(.data, questions, svy_years) {
     cli::cli_abort("Please provide at least one valid question (e.g. 'Q1').")
   }
 
-  invalid_questions <- setdiff(questions, names(.data))
-  if (length(invalid_questions) > 0) {
-    cli::cli_abort("The following question(s) are not found in the data: {paste(invalid_questions, collapse = ', ')}.")
+  if (!all(questions %in% names(.data))) {
+    rtn_missing_qs <- (paste0("**", "The following questions are not in `.data`: ",
+                              paste(questions[!(questions %in% names(.data))], collapse = ", "), "**"))
+    return(rtn_missing_qs)
   }
 
   if (missing(svy_years) || length(svy_years) < 1) {
@@ -301,8 +303,9 @@ fps_chart <- function(.data, questions, years, yaxis, fill, stacked = TRUE) {
   }
 
   if (!all(questions %in% names(.data))) {
-    cli::cli_abort(paste("The following questions are not in `.data`:",
-                         paste(questions[!(questions %in% names(.data))], collapse = ", ")))
+    rtn_missing_qs <- (paste0("**", "The following questions are not in `.data`: ",
+                              paste(questions[!(questions %in% names(.data))], collapse = ", "), "**"))
+    return(rtn_missing_qs)
   }
 
   if (!is.numeric(years) || length(years) == 0) {
