@@ -1,3 +1,7 @@
+# FPSurveyR 1.1.1
+
+* Patch to update `round_percent` validation to prevent running on values less than -1 instead of less than 0. 
+
 # FPSurveyR 1.1.0
 
 * Addition of `fps_data_to_binary` function to compliment overhaul of pipeline's validation and formatting scripts.

@@ -1,6 +1,6 @@
 Package: FPSurveyR
 Title: Farm Practices Survey - an R package containing functions for data analysis and statistical notice production
-Version: 1.1.0
+Version: 1.1.1
 Authors@R: 
     c(person("Tom", "Pearson", email = "thomas.pearson@defra.gov.uk", role = c("aut", "cre")),
     person("Crown Copyright (Defra)", role = "cph"))
