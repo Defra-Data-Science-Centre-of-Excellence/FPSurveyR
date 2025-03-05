@@ -2,11 +2,11 @@
 
 testthat::test_that("round_percent rounds correctly", {
 
-  testing_vec <- c(0.255, 0.225, 0.254)
+  testing_vec <- c(0.255, 0.225, 0.254, -0.5)
 
   act <- round_percent(testing_vec)
 
-  exp <- c("26%", "23%", "25%")
+  exp <- c("26%", "23%", "25%", "-50%")
   testthat::expect_equal(act, exp)
 })
 
