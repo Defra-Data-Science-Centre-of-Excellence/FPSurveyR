@@ -1,3 +1,7 @@
+# FPSurveyR 1.1.2
+
+* Add validation to account for missing `.data` in narrative and chart functions.
+
 # FPSurveyR 1.1.1
 
 * Patch to update `round_percent` validation to prevent running on values less than -1 instead of less than 0. 
