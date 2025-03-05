@@ -1,7 +1,7 @@
 #' @title FPS: Narrative: Convert proportions to rounded percentages
 #' @author Tom Pearson
 #' @description This function converts a decimal value (e.g. 0.25) into a
-#'   percentage (e.g., 25%) by multiplying by 100 and rounding to the nearest
+#'   percentage (e.g. 25%) by multiplying by 100 and rounding to the nearest
 #'   whole number. The result is formatted as a percentage.
 #'
 #' @param val A numeric vector of decimal values to be rounded to percentages.
@@ -30,8 +30,8 @@ round_percent <- function(val) {
     cli::cli_abort("Input 'val' must be a numeric vector.")
   }
 
-  if (any(val < 0 | val > 1)) {
-    cli::cli_abort("Input 'val' must be decimal values between 0 and 1.")
+  if (any(val < -1 | val > 1)) {
+    cli::cli_abort("Input 'val' must be decimal values between -1 and 1.")
   }
 
   #rounding=====================================================================
