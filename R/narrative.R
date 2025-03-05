@@ -140,6 +140,10 @@ get_percent <- function(.data, questions, response_key, svy_year) {
 
   #validation===================================================================
 
+  if (!exists(deparse(substitute(.data)), envir = parent.frame())) {
+    return(paste0("**'", deparse(substitute(.data)), "' doesn't exist**"))
+  }
+
   if (missing(.data) || !is.list(.data)) {
     cli::cli_abort("Please supply a valid list of tables.")
   }
@@ -311,6 +315,11 @@ get_percent <- function(.data, questions, response_key, svy_year) {
 get_doc <- function(.data, question, response_key, svy_years, past = FALSE, abbr = FALSE, get_pc = FALSE) {
 
   #validation===================================================================
+
+  if (!exists(deparse(substitute(.data)), envir = parent.frame())) {
+    return(paste0("**'", deparse(substitute(.data)), "' doesn't exist**"))
+  }
+
   if (missing(.data) || !is.list(.data)) {
     cli::cli_abort("Please supply a valid list of tables.")
   }
@@ -561,6 +570,10 @@ get_doc <- function(.data, question, response_key, svy_years, past = FALSE, abbr
 get_name <- function(.data, questions, svy_year, ordinal, get_percent = FALSE, responses_to_exclude = NULL) {
 
   #validation===================================================================
+  if (!exists(deparse(substitute(.data)), envir = parent.frame())) {
+    return(paste0("**'", deparse(substitute(.data)), "' doesn't exist**"))
+  }
+
   if (missing(.data) || !is.list(.data)) {
     cli::cli_abort("Please supply a valid list of tables.")
   }

@@ -46,7 +46,9 @@ fps_dodged <- function(.data, questions, svy_years, pivot_from_response = FALSE)
   # pivot_from_response = FALSE
 
   #validation===================================================================
-
+  if (!exists(deparse(substitute(.data)), envir = parent.frame())) {
+    return(paste0("**'", deparse(substitute(.data)), "' doesn't exist**"))
+  }
 
   if (!is.list(.data)) {
     cli::cli_abort("Input '.data' must be a list object containing survey data.")
@@ -170,6 +172,10 @@ fps_stacked <- function(.data, questions, svy_years) {
   # svy_years = seq(survey_year-4, survey_year)
 
   #validation===================================================================
+  if (!exists(deparse(substitute(.data)), envir = parent.frame())) {
+    return(paste0("**'", deparse(substitute(.data)), "' doesn't exist**"))
+  }
+
   if (!is.list(.data)) {
     cli::cli_abort("Input '.data' must be a list object containing survey data.")
   }
@@ -294,6 +300,10 @@ fps_chart <- function(.data, questions, years, yaxis, fill, stacked = TRUE) {
   # stacked = FALSE
 
   #validation===================================================================
+  if (!exists(deparse(substitute(.data)), envir = parent.frame())) {
+    return(paste0("**'", deparse(substitute(.data)), "' doesn't exist**"))
+  }
+
   if (!is.list(.data) || is.null(names(.data))) {
     cli::cli_abort("`.data` must be a named list of data frames.")
   }
