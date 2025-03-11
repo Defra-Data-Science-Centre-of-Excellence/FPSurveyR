@@ -199,6 +199,16 @@ fps_format_factors <- function(.data,
 
                   post_strat = as.character(post_strat))
 
+  if(any(is.na(.data$fps_gor))) {
+    cli::cli_alert_danger("There are `NA` records in the data for `fps_gor`. Check the factor levels in the data.")
+  }
+  if(any(is.na(.data$fps_slr_name))) {
+    cli::cli_alert_danger("There are `NA` records in the data for `fps_slr_name`. Check the factor levels in the data.")
+  }
+  if(any(is.na(.data$fps_robust))) {
+    cli::cli_alert_danger("There are `NA` records in the data for `fps_robust`. Check the factor levels in the data.")
+  }
+
   return(.data)
 
 }
