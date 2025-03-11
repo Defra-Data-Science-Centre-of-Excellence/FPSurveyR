@@ -189,6 +189,8 @@ fps_format_factors <- function(.data,
                   fps_robust = {{farm_type_col}},
                   post_strat = {{strat_col}}) %>%
     dplyr::mutate(fps_gor = gsub(" \\(England\\)", "", fps_gor, ignore.case = TRUE),
+                  fps_gor = ifelse(grepl("London", fps_gor, ignore.case = TRUE), "South East including London", fps_gor),
+                  fps_gor = ifelse(grepl("South East", fps_gor, ignore.case = TRUE), "South East including London", fps_gor),
                   fps_gor = ifelse(grepl("North West", fps_gor, ignore.case = TRUE), "North West and Merseyside", fps_gor),
 
                   fps_slr_name = snakecase::to_sentence_case(fps_slr_name),
