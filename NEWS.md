@@ -1,3 +1,7 @@
+# FPSurveyR 1.1.3
+
+* Add conditions for dealing with missing `fps_gor` factor "South East including London" to `fps_format_factors`, and print warning messages if NA levels present for any factor
+
 # FPSurveyR 1.1.2
 
 * Add validation to account for missing `.data` in narrative and chart functions.
