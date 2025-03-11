@@ -1,6 +1,7 @@
 # FPSurveyR 1.1.3
 
-* Add conditions for dealing with missing `fps_gor` factor "South East including London" to `fps_format_factors`, and print warning messages if NA levels present for any factor
+* Add conditions for dealing with missing `fps_gor` factors "East of England" and "South East including London" in `fps_format_factors`.
+* Add printing of warning messages if NA levels present for any factor in `fps_format_factors`.
 
 # FPSurveyR 1.1.2
 
