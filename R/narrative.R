@@ -1,7 +1,7 @@
 #' @title FPS: Narrative: Convert proportions to rounded percentages
 #' @author Tom Pearson
 #' @description This function converts a decimal value (e.g. 0.25) into a
-#'   percentage (e.g., 25%) by multiplying by 100 and rounding to the nearest
+#'   percentage (e.g. 25%) by multiplying by 100 and rounding to the nearest
 #'   whole number. The result is formatted as a percentage.
 #'
 #' @param val A numeric vector of decimal values to be rounded to percentages.
@@ -30,8 +30,8 @@ round_percent <- function(val) {
     cli::cli_abort("Input 'val' must be a numeric vector.")
   }
 
-  if (any(val < 0 | val > 1)) {
-    cli::cli_abort("Input 'val' must be decimal values between 0 and 1.")
+  if (any(val < -1 | val > 1)) {
+    cli::cli_abort("Input 'val' must be decimal values between -1 and 1.")
   }
 
   #rounding=====================================================================
@@ -139,6 +139,10 @@ get_percent <- function(.data, questions, response_key, svy_year) {
   # svy_year = 2024
 
   #validation===================================================================
+
+  if (!exists(deparse(substitute(.data)), envir = parent.frame())) {
+    return(paste0("**'", deparse(substitute(.data)), "' doesn't exist**"))
+  }
 
   if (missing(.data) || !is.list(.data)) {
     cli::cli_abort("Please supply a valid list of tables.")
@@ -311,6 +315,11 @@ get_percent <- function(.data, questions, response_key, svy_year) {
 get_doc <- function(.data, question, response_key, svy_years, past = FALSE, abbr = FALSE, get_pc = FALSE) {
 
   #validation===================================================================
+
+  if (!exists(deparse(substitute(.data)), envir = parent.frame())) {
+    return(paste0("**'", deparse(substitute(.data)), "' doesn't exist**"))
+  }
+
   if (missing(.data) || !is.list(.data)) {
     cli::cli_abort("Please supply a valid list of tables.")
   }
@@ -561,6 +570,10 @@ get_doc <- function(.data, question, response_key, svy_years, past = FALSE, abbr
 get_name <- function(.data, questions, svy_year, ordinal, get_percent = FALSE, responses_to_exclude = NULL) {
 
   #validation===================================================================
+  if (!exists(deparse(substitute(.data)), envir = parent.frame())) {
+    return(paste0("**'", deparse(substitute(.data)), "' doesn't exist**"))
+  }
+
   if (missing(.data) || !is.list(.data)) {
     cli::cli_abort("Please supply a valid list of tables.")
   }

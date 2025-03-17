@@ -1,3 +1,16 @@
+# FPSurveyR 1.1.3
+
+* Add conditions for dealing with missing `fps_gor` factors "East of England" and "South East including London" in `fps_format_factors`.
+* Add printing of warning messages if NA levels present for any factor in `fps_format_factors`.
+
+# FPSurveyR 1.1.2
+
+* Add validation to account for missing `.data` in narrative and chart functions.
+
+# FPSurveyR 1.1.1
+
+* Patch to update `round_percent` validation to prevent running on values less than -1 instead of less than 0. 
+
 # FPSurveyR 1.1.0
 
 * Addition of `fps_data_to_binary` function to compliment overhaul of pipeline's validation and formatting scripts.

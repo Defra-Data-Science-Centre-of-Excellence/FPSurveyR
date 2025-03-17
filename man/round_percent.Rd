@@ -15,7 +15,7 @@ A character vector with the values converted to percentages (e.g.
 }
 \description{
 This function converts a decimal value (e.g. 0.25) into a
-percentage (e.g., 25\%) by multiplying by 100 and rounding to the nearest
+percentage (e.g. 25\%) by multiplying by 100 and rounding to the nearest
 whole number. The result is formatted as a percentage.
 }
 \details{
