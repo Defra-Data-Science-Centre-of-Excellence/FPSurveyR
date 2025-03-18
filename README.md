@@ -15,31 +15,43 @@ stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://
 This package contains all the required functions for producing the [Farm
 Practices Survey
 (FPS)](https://www.gov.uk/government/collections/farm-practices-survey)
-statistical notice, dataset and values for the time-series. The
-functions are designed to work within the FPS analysis pipeline which is
-a separate R Project. The pipeline pre-processes the FPS data exported
-from MS Access by the June team, analyses the data to produce
-means/ratios plus associated confidence intervals, and undertakes
-post-processing to format the data correctly for output using
-parameterised R Markdown to produce the statistical report on GOV.UK.
+statistical notice, dataset and values for the time-series (as CSVs).
+The functions are designed to work within the [FPS
+pipeline](https://github.com/Defra-Data-Science-Centre-of-Excellence/fps_pipeline)
+which is a separate R Project. The pipeline validates and pre-processes
+the FPS data exported from MS Access by the June team, analyses the data
+to produce means/ratios plus associated confidence intervals, and
+undertakes post-processing to format the data correctly for outputs.
+This includes using parameterised R Markdown to produce the statistical
+report for GOV.UK.
 
 ## Installation
 
-You can install the development version of FPSurveyR from
-[GitHub](https://github.com/) with:
+### Option 1
+
+You can install the development version of `FPSurveyR` from GitHub with:
 
 ``` r
 devtools::install_github("Defra-Data-Science-Centre-of-Excellence/FPSurveyR")
 ```
 
-Alternatively, manually download the latest
-[release](https://github.com/Defra-Data-Science-Centre-of-Excellence/FPSurveyR/releases/tag/v1.1.3)
+If trying to install via Github on Defra laptops, you may first need to
+configure your http proxy settings. Instructions on how to do this are
+contained within the FPS pipeline README.
+
+### Option 2
+
+Alternatively, manually [download the latest
+release](https://github.com/Defra-Data-Science-Centre-of-Excellence/FPSurveyR/releases/tag/v1.1.3)
 and install using the following code (changing the file path to where
 you downloaded the package to):
 
 ``` r
 install.packages("~/Downloads/FPSurveyR_1.1.3.tar.gz", repos=NULL)
 ```
+
+You may need to install a few dependencies from CRAN first if they are
+missing (e.g. `srvyr` and `afcharts`).
 
 ## Example
 
