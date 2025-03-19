@@ -60,3 +60,10 @@ Load the package:
 ``` r
 library(FPSurveyR)
 ```
+
+Query the documentation (help sheets) for a function once the package
+has been loaded:
+
+``` r
+?get_percent
+```
