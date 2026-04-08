@@ -30,9 +30,10 @@ round_percent <- function(val) {
     cli::cli_abort("Input 'val' must be a numeric vector.")
   }
 
-  if (any(val < -1 | val > 1)) {
-    cli::cli_abort("Input 'val' must be decimal values between -1 and 1.")
-  }
+  # JPM commenting out in 2026 - have values >100% and this was braking the code
+  # if (any(val < -1 | val > 1)) {
+  #   cli::cli_abort("Input 'val' must be decimal values between -1 and 1.")
+  # }
 
   #rounding=====================================================================
   val <- janitor::round_half_up(val, digits = 2)
