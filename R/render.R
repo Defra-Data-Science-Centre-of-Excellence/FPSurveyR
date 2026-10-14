@@ -8,6 +8,8 @@
 #'
 #' @param out_dir Character. The base directory containing the `report` and
 #'   `charts` subdirectories.
+#' @param report_dir Character. The directory containing `reports`
+#' @param chart_dir Character. The directory containing `charts`
 #' @param section Character (optional). The specific section or subdirectory
 #'   under `report` and `charts` to process. Defaults to `NULL`, meaning no
 #'   specific section is targeted.
@@ -26,6 +28,8 @@
 #'
 #' @export
 fps_delete_old_versions <- function(out_dir,
+                                    report_dir,
+                                    chart_dir,
                                     section = NULL,
                                     delete = FALSE,
                                     delete_unit = "hours",
@@ -38,6 +42,22 @@ fps_delete_old_versions <- function(out_dir,
 
   if (!dir.exists(out_dir)) {
     cli::cli_abort("The specified `out_dir` does not exist.")
+  }
+
+  if (!is.character(report_dir) || length(report_dir) != 1) {
+    cli::cli_abort("`report_dir` must be a single character string.")
+  }
+
+  if (!dir.exists(paste(out_dir, report_dir, section, sep = "/"))) {
+    cli::cli_abort("The specified `report_dir` does not exist.")
+  }
+
+  if (!is.character(chart_dir) || length(chart_dir) != 1) {
+    cli::cli_abort("`chart_dir` must be a single character string.")
+  }
+
+  if (!dir.exists(paste(out_dir, chart_dir, section, sep = "/"))) {
+    cli::cli_abort("The specified `chart_dir` does not exist.")
   }
 
   if (!is.null(section) && (!is.character(section) || length(section) != 1)) {
@@ -64,8 +84,8 @@ fps_delete_old_versions <- function(out_dir,
 
 
   #list files===================================================================
-  report_f_info <- fs::dir_info(paste0(out_dir, "/report/", section))
-  chart_f_info <- fs::dir_info(paste0(out_dir, "/charts/", section))
+  report_f_info <- fs::dir_info(paste(out_dir, report_dir, section, sep = '/'))
+  chart_f_info <- fs::dir_info(paste(out_dir, chart_dir, section, sep = '/'))
 
   report_f_info <- dplyr::filter(report_f_info, type == "file")
   chart_f_info <- dplyr::filter(chart_f_info, type == "file")
