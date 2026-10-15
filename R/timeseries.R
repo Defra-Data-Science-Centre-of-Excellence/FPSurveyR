@@ -13,10 +13,9 @@
 #' @param survey_year Numeric. The year of the latest survey data being added
 #'   (defaults to the current year).
 #' @param timeseries_directory A string specifying the directory path containing
-#'   the time-series CSV files (which should be on the L drive).
+#'   the time-series CSV files.
 #' @param timeseries_directory A string specifying the directory path of your
-#'   pipeline's outputs folder. Defaults to
-#'   `"example_project/outputs/timeseries/"`
+#'   pipeline's outputs folder. 
 #' @param write_to_timeseries_directory Logical. If `TRUE`, updated time-series
 #'   data is written back to the original directory to overwrite any existing
 #'   time-series files there. Defaults to `FALSE`.
@@ -42,7 +41,7 @@ fps_update_timeseries <- function(tbl_list,
                                   questions,
                                   survey_year = as.numeric(format(Sys.Date(), "%Y")),
                                   timeseries_directory,
-                                  output_directory = paste0(here::here("outputs", "timeseries"), "/"),
+                                  output_directory,
                                   write_to_timeseries_directory = FALSE) {
 
   #testing======================================================================
@@ -100,18 +99,18 @@ fps_update_timeseries <- function(tbl_list,
     #READ IN TS###################################################################
     #NOTE: The tables read in are copy-pasted from the time series into separate csv files for each question for speed. Actual values are pasted in, rather than % (i.e. 0.1 instead of 10%)
 
-    tmp_fp <- paste0(timeseries_directory, q, ".csv")
+    tmp_fp <- here::here(timeseries_directory, paste0(q, ".csv"))
 
     if(file.exists(tmp_fp)) {
 
       tmp_ts <- readr::read_csv(tmp_fp, show_col_types = FALSE)
 
       #backing up original time series in subdirectory before modification
-      backup_dir <- paste0(timeseries_directory, "backup/")
+      backup_dir <- here::here(timeseries_directory, "backup")
       if(!dir.exists(backup_dir)) {
         dir.create(backup_dir, recursive = TRUE)
       }
-      readr::write_csv(tmp_ts, paste0(backup_dir, q, ".csv"))
+      readr::write_csv(tmp_ts, here::here(backup_dir, paste0(q, ".csv")))
 
       #FORMAT TS DATA###############################################################
 
@@ -186,22 +185,13 @@ fps_update_timeseries <- function(tbl_list,
                             "' - likely that time series response option names do not match those in the name responses script (i.e. you need to edit the response names in the name responses script so they match the time series)"))
     }
 
-    #writing to L drive=========================================================
-    if(write_to_timeseries_directory == TRUE) {
-
-      readr::write_csv(tmp_ts_csv, tmp_fp)
-
-      cli::cli_alert_info(paste0("Time series for ", q, " written to original time-series directory at: {.file {tmp_fp}}"))
-
-
-    }
 
     #writing locally============================================================
     if(!dir.exists(output_directory)) {
       dir.create(output_directory, recursive = TRUE)
     }
 
-    readr::write_csv(tmp_ts_csv, paste0(output_directory, q, ".csv"))
+    readr::write_csv(tmp_ts_csv, here::here(output_directory, paste0(q, ".csv")))
 
     cli::cli_alert_info(paste0("Time series for ", q, " written at: {.file {output_directory}}."))
 
