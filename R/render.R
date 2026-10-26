@@ -40,7 +40,7 @@ fps_delete_old_versions <- function(out_dir,
     cli::cli_abort("`out_dir` must be a single character string.")
   }
 
-  if (!dir.exists(out_dir)) {
+  if (!exists_dash_dir(out_dir)) {
     cli::cli_abort("The specified `out_dir` does not exist.")
   }
 
@@ -48,7 +48,7 @@ fps_delete_old_versions <- function(out_dir,
     cli::cli_abort("`report_dir` must be a single character string.")
   }
 
-  if (!dir.exists(paste(out_dir, report_dir, section, sep = "/"))) {
+  if (!exists_dash_dir(paste(out_dir, report_dir, section, sep = "/"))) {
     cli::cli_abort("The specified `report_dir` does not exist.")
   }
 
@@ -56,7 +56,7 @@ fps_delete_old_versions <- function(out_dir,
     cli::cli_abort("`chart_dir` must be a single character string.")
   }
 
-  if (!dir.exists(paste(out_dir, chart_dir, section, sep = "/"))) {
+  if (!exists_dash_dir(paste(out_dir, chart_dir, section, sep = "/"))) {
     cli::cli_abort("The specified `chart_dir` does not exist.")
   }
 
@@ -101,18 +101,19 @@ fps_delete_old_versions <- function(out_dir,
           file_info <- purrr::map_dfr(
             brickster::db_volume_list(path)$contents,
             tibble::as_tibble
-          ) |>
-            dplyr::filter(!is_directory) |>
-            dplyr::mutate(
-              last_modified = as.POSIXct(
-                last_modified / 1000,
-                origin = "1970-01-01",
-                tz = "UTC"
-              )
-            )
+          ) 
 
           if (delete && nrow(file_info) > 0) {
-
+            file_info <- file_info |>
+              dplyr::filter(!is_directory) |>
+              dplyr::mutate(
+                last_modified = as.POSIXct(
+                  last_modified / 1000,
+                  origin = "1970-01-01",
+                  tz = "UTC"
+                )
+              )
+              
             files_to_delete <- file_info$path[
               Sys.time() - file_info$last_modified >
                 lubridate::duration(
@@ -401,27 +402,27 @@ fps_write_dataset <- function(out_dir = ".",
   while (attempt <= max_tries) {
 
     result <- tryCatch(
-
       {
-
         dataset_f_info <- purrr::map_dfr(
           brickster::db_volume_list(out_dir)$contents,
           tibble::as_tibble
-        ) |>
-          dplyr::filter(
-            !is_directory,
-            grepl("\\.xlsx$", path)
-          ) |>
-          dplyr::mutate(
-            last_modified = as.POSIXct(
-              last_modified / 1000,
-              origin = "1970-01-01",
-              tz = "UTC"
-            )
-          )
+        ) 
 
         if (delete && nrow(dataset_f_info) > 0) {
 
+          dataset_f_info <- dataset_f_info |>
+            dplyr::filter(
+              !is_directory,
+              grepl("\\.xlsx$", path)
+            ) |>
+            dplyr::mutate(
+              last_modified = as.POSIXct(
+                last_modified / 1000,
+                origin = "1970-01-01",
+                tz = "UTC"
+              )
+            )
+          
           files_to_delete <- dataset_f_info$path[
             Sys.time() - dataset_f_info$last_modified >
               lubridate::duration(delete_number, units = delete_unit)
