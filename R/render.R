@@ -1,12 +1,12 @@
 #' @title FPS: Render: Delete old versions (of reports/charts)
 #' @author Tom Pearson
 #' @description This function deletes old versions of reports and charts in the
-#'   specified output directory if the `delete` parameter is set to `TRUE`. The
+#'   specified output directory in Databricks if the `delete` parameter is set to `TRUE`. The
 #'   deletion is based on a time period defined by `delete_unit` and
 #'   `delete_number`. The function is designed to be used prior to rendering a
 #'   new report to ensure only the current reports/charts are being used
 #'
-#' @param out_dir Character. The base directory containing the `report` and
+#' @param out_dir Character. The base directory in Databricks containing the `report` and
 #'   `charts` subdirectories.
 #' @param report_dir Character. The directory containing `reports`
 #' @param chart_dir Character. The directory containing `charts`
@@ -21,7 +21,7 @@
 #'   threshold for deletion. Defaults to `12`.
 #'
 #' @examples
-#' #fps_delete_old_versions(out_dir = "output", section = "01_nutrient_management",
+#' #fps_delete_old_versions(out_dir = "/Volumes/prd_dash_lab/<volume>/<folder_path>", section = "01_nutrient_management",
 #' #                        delete = TRUE, delete_unit = "days", delete_number = 30)
 #'
 #' @seealso \link[base]{difftime}
@@ -242,8 +242,8 @@ fps_format_md <- function(out_dir_md = ".",
 #'   regardless of how many sections are being knit. Optionally, old copies of
 #'   the dataset can be deleted based on a specified time period.
 #'
-#' @param out_dir Character. The directory where the dataset should be saved.
-#'   Defaults to the current directory (`"."`).
+#' @param out_dir Character. The directory where the dataset should be saved in 
+#'   Databricks. Defaults to the current directory (`"."`).
 #' @param workbook A `Workbook` object created with the `openxlsx` package. This
 #'   is the dataset to save.
 #' @param delete Logical. If `TRUE`, old copies of the dataset in the output
@@ -264,7 +264,12 @@ fps_format_md <- function(out_dir_md = ".",
 #'   }
 #'
 #' @examples
-#' #fps_write_dataset(workbook = my_workbook, delete = TRUE, delete_unit = "hours", delete_number = 24)
+#' #fps_write_dataset(
+#' #  out_dir = 'Volumes/prd_dash_lab/<volume>/<path>/'
+#' #  workbook = my_workbook, 
+#' #  delete = TRUE, 
+#' #  delete_unit = "hours", 
+#' #  delete_number = 24)
 #'
 #' @seealso \link[openxlsx]{saveWorkbook}
 #'
@@ -305,24 +310,94 @@ fps_write_dataset <- function(out_dir = ".",
     cli::cli_abort("The `out_dir` directory does not exist.")
   }
 
-  ###delete old versions?=======================================================
-  dataset_f_info <- fs::dir_info(out_dir)
+  #delete old versions
+  attempt <- 1
+  max_tries <- 5
+  interval <- 2
 
-  dataset_f_info <- dplyr::filter(dataset_f_info,
-                                  type == "file",
-                                  grepl(".xlsx$", path))
+  while (attempt <= max_tries) {
 
-  if(delete == TRUE & nrow(dataset_f_info) > 0) {
+    result <- tryCatch(
 
-    dataset_f <- dataset_f_info$path[difftime(Sys.time(), dataset_f_info$modification_time, units = delete_unit) > delete_number]
-    fs::file_delete(dataset_f)
+      {
+
+        dataset_f_info <- purrr::map_dfr(
+          brickster::db_volume_list(out_dir)$contents,
+          tibble::as_tibble
+        ) |>
+          dplyr::filter(
+            !is_directory,
+            grepl("\\.xlsx$", path)
+          ) |>
+          dplyr::mutate(
+            last_modified = as.POSIXct(
+              last_modified / 1000,
+              origin = "1970-01-01",
+              tz = "UTC"
+            )
+          )
+
+        if (delete && nrow(dataset_f_info) > 0) {
+
+          files_to_delete <- dataset_f_info$path[
+            Sys.time() - dataset_f_info$last_modified >
+              lubridate::duration(delete_number, units = delete_unit)
+          ]
+
+          if (length(files_to_delete) > 0) {
+            purrr::walk(
+              files_to_delete,
+              brickster::db_volume_delete
+            )
+          }
+        }
+
+        TRUE
+
+      },
+
+      error = function(e) {
+
+        msg <- conditionMessage(e)
+
+        if (grepl("404", msg)) {
+          cli::cli_abort('Databricks path is incorrect')
+        }
+
+        if (
+          grepl("HTTP/2 stream", msg, ignore.case = TRUE) ||
+          grepl("Failed to perform HTTP request", msg)
+        ) {
+          return(structure("retry", class = "retry"))
+        }
+
+        stop(e)
+
+      }
+
+    )
+
+    if (!inherits(result, "retry")) {
+      break()
+    }
+
+    if (attempt < max_tries) {
+      Sys.sleep(interval)
+    }
+
+    attempt <- attempt + 1
 
   }
 
+  if (attempt > max_tries && inherits(result, "retry")) {
+     cli::cli_abort("Maximum retries exceeded.")
+  }
+
+
   ###write dataset==============================================================
   dataset_fp <- paste0(out_dir, "fps-ghg-dataset-", date, ".xlsx")
-  openxlsx::saveWorkbook(wb = workbook,
-                         file = dataset_fp,
-                         overwrite = T)
-  cli::cli_alert_success("Data written to XLSX at {.path {dataset_fp}}.")
+  DefraUtils::write_xlsx_to_volume(wb = workbook,
+                                   path = dataset_fp,
+                                   overwrite = TRUE)
+  cli::cli_alert_success("Data written to XLSX at {.path {dataset_fp}} in Databricks.")
 }

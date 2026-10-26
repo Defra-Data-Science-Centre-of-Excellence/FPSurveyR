@@ -386,11 +386,11 @@ fps_analyse_by_factor <- function(design,
 #'   or means (`FALSE`). Defaults to `FALSE`.
 #' @param factor_col A character string specifying the column name for factors
 #'   in the output. Defaults to `"cat"`.
-#' @param excel_file_path A character string specifying the file path where the
+#' @param excel_file_path A character string specifying the Databricks file path where the
 #'   Excel workbook will be saved.
 #'
 #' @return Saves the analysis results into an Excel file at the specified
-#'   `excel_file_path`.
+#'   `excel_file_path` in Databricks.
 #'
 #' @details
 #' \itemize{
@@ -408,7 +408,7 @@ fps_analyse_by_factor <- function(design,
 #' #  denominator = "total_area",
 #' #  ratio = TRUE,
 #' #  factor_col = "group",
-#' #  excel_file_path = "results.xlsx")
+#' #  excel_file_path = "Volume/prd_dash_lab/<volume>/<path>/results.xlsx")
 #'
 #' @export
 fps_prepare_results <- function(design,
@@ -595,9 +595,8 @@ fps_prepare_results <- function(design,
                         sheet = sheet_name,
                         tmp)
     #save workbook
-    openxlsx::saveWorkbook(wb,
-                           excel_file_path,
-                           overwrite = TRUE)
+    DefraUtils::write_xlsx_to_volume(wb,
+                           excel_file_path)
 
   }
 
@@ -610,7 +609,7 @@ fps_prepare_results <- function(design,
 #' @description This function reads all sheets from an Excel workbook and
 #'   returns them as a list of data frames.
 #'
-#' @param filename A string specifying the path to the Excel file.
+#' @param filename A string specifying the path to the Excel file in Databricks.
 #'
 #' @return A named list of data frames, where each element corresponds to a
 #'   sheet in the workbook. The names of the list elements are the sheet names.
@@ -638,13 +637,13 @@ fps_read_excel_allsheets <- function(filename) {
   #read and process sheets======================================================
 
   # Check if the file has at least one sheet
-  sheets <- readxl::excel_sheets(filename)
+  sheets <- DefraUtils::read_xlsx_from_volume(filename)
 
   if (length(sheets) == 0) {
     cli::cli_abort("The file {.path {filename}} does not contain any sheets.")
   }
 
-  tmp <- lapply(sheets, function(x) readxl::read_excel(filename, sheet = x))
+  tmp <- lapply(sheets, function(x) DefraUtils::read_xlsx_from_volume(filename, sheet = x))
 
   tmp <- lapply(tmp, as.data.frame)
 
@@ -781,8 +780,8 @@ fps_add_empty_factors <- function(.data,
 #'   Practices Survey (FPS). It processes survey data, sets the survey design,
 #'   and prepares results using lower-level functions (`fps_process_factors`,
 #'   `fps_prepare_results`, and `fps_analyse_by_factor`). The analysis outputs
-#'   include formatted results and tables, written to XLSX files for quality
-#'   assurance and subsequent use in the RAP process.
+#'   include formatted results and tables, written to XLSX files in Databreicks
+#'   for quality assurance and subsequent use in the RAP process. 
 #'
 #' @param .data A data frame containing the survey data to be analysed. The data
 #'   frame must include relevant columns for defining the survey design (e.g.
@@ -807,10 +806,10 @@ fps_add_empty_factors <- function(.data,
 #'   specified questions using a denominator derived from the variable names in
 #'   `questions_list`. If `FALSE`, means are calculated. Defaults to
 #'   `FALSE`.
-#' @param results_fp A character string specifying the file path where
+#' @param results_fp A character string specifying the Databricks file path where
 #'   intermediate analysis results will be saved as XLSX files. The path must
-#'   exist, and the function appends the results filenames.
-#' @param tables_fp A character string specifying the file path where the final
+#'   exist, and the function appends the results filenames. 
+#' @param tables_fp A character string specifying Databricks the file path where the final
 #'   formatted tables will be saved as XLSX files. The path must exist, and the
 #'   function appends the tables filenames.
 #'
@@ -1049,11 +1048,11 @@ fps_analysis <- function(.data,
                         variables = questions,
                         denominator = denom,
                         ratio = ratio,
-                        excel_file_path = here::here(results_fp, paste0(q, results_ext, "_results.xlsx")))
+                        excel_file_path = paste0(results_fp, paste0("/", q, results_ext, "_results.xlsx")))
 
 
     #create a list of tables based on output of prepare_results_mean
-    tmp_sheets <- fps_read_excel_allsheets(here::here(results_fp, paste0(q, results_ext, "_results.xlsx")))
+    tmp_sheets <- fps_read_excel_allsheets(paste0(results_fp, paste0("/", q, results_ext, "_results.xlsx")))
     tmp_table_list[[i]] <- tmp_sheets
 
     #name each table in list based on Q it pertains to for explicit and easy reference
@@ -1092,12 +1091,12 @@ fps_analysis <- function(.data,
     #write formatted tables=====================================================
 
     #write tables (includes separate sheet for each factor)
-    openxlsx::write.xlsx(tmp_table_list[[q]], here::here(tables_fp, paste0("table_", q, results_ext, ".xlsx")))
+    DefraUtils::write_xlsx_to_volume(tmp_table_list[[q]], paste0(tables_fp, paste0("/table_", q, results_ext, ".xlsx")))
 
     cli::cli_progress_update()
   }
 
-  cli::cli_alert_success("Analysis done! Outputs can be found in R within the section's `table_list`. Outputs are also written to file locally at: {.path {tables_fp}}.")
+  cli::cli_alert_success("Analysis done! Outputs can be found in Databricks within the section's `table_list`")
   cli::cli_alert_info("The following questions were analysed: {.val {names(tmp_table_list)}}")
 
   return(tmp_table_list)
