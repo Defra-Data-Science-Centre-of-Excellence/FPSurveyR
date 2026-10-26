@@ -84,26 +84,109 @@ fps_delete_old_versions <- function(out_dir,
 
 
   #list files===================================================================
-  report_f_info <- fs::dir_info(paste(out_dir, report_dir, section, sep = '/'))
-  chart_f_info <- fs::dir_info(paste(out_dir, chart_dir, section, sep = '/'))
+  
+  report_path <- paste(out_dir, report_dir, section, sep = "/")
+  chart_path  <- paste(out_dir, chart_dir, section, sep = "/")
 
-  report_f_info <- dplyr::filter(report_f_info, type == "file")
-  chart_f_info <- dplyr::filter(chart_f_info, type == "file")
+  delete_old_files <- function(path) {
 
+    attempt <- 1
+    max_tries <- 5
+    interval <- 2
 
-  #delete files=================================================================
-  if(delete == TRUE & nrow(report_f_info) > 0) {
+    while (attempt <= max_tries) {
 
-    report_f <- report_f_info$path[difftime(Sys.time(), report_f_info$modification_time, units = delete_unit) > delete_number]
-    fs::file_delete(report_f)
+      result <- tryCatch(
+        {
+          file_info <- purrr::map_dfr(
+            brickster::db_volume_list(path)$contents,
+            tibble::as_tibble
+          ) |>
+            dplyr::filter(!is_directory) |>
+            dplyr::mutate(
+              last_modified = as.POSIXct(
+                last_modified / 1000,
+                origin = "1970-01-01",
+                tz = "UTC"
+              )
+            )
+
+          if (delete && nrow(file_info) > 0) {
+
+            files_to_delete <- file_info$path[
+              Sys.time() - file_info$last_modified >
+                lubridate::duration(
+                  delete_number,
+                  units = delete_unit
+                )
+            ]
+
+            if (length(files_to_delete) > 0) {
+
+              purrr::walk(
+                files_to_delete,
+                brickster::db_volume_delete
+              )
+
+            }
+
+          }
+
+          TRUE
+
+        },
+
+        error = function(e) {
+
+          msg <- conditionMessage(e)
+
+          if (grepl("404", msg)) {
+            cli::cli_abort(
+              paste0(
+                "Databricks path does not exist: ",
+                path
+              )
+            )
+          }
+
+          if (
+            grepl("HTTP/2 stream", msg, ignore.case = TRUE) ||
+            grepl("Failed to perform HTTP request", msg)
+          ) {
+            return(structure("retry", class = "retry"))
+          }
+
+          stop(e)
+
+        }
+
+      )
+
+      if (!inherits(result, "retry")) {
+        break()
+      }
+
+      if (attempt < max_tries) {
+        Sys.sleep(interval)
+      }
+
+      attempt <- attempt + 1
+
+    }
+
+    if (attempt > max_tries && inherits(result, "retry")) {
+      cli::cli_abort("Maximum retries exceeded.")
+    }
 
   }
-  if(delete == TRUE & nrow(chart_f_info) > 0) {
 
-    chart_f <- chart_f_info$path[difftime(Sys.time(), chart_f_info$modification_time, units = delete_unit) > delete_number]
-    fs::file_delete(chart_f)
+  # delete report files =======================================================
 
-  }
+  delete_old_files(report_path)
+
+  # delete chart files ========================================================
+
+  delete_old_files(chart_path)
 }
 
 #' @title FPS: Render: Format Markdown files for GOV.UK
