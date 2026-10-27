@@ -13,9 +13,9 @@
 #' @param survey_year Numeric. The year of the latest survey data being added
 #'   (defaults to the current year).
 #' @param timeseries_directory A string specifying the directory path containing
-#'   the time-series CSV files.
-#' @param timeseries_directory A string specifying the directory path of your
-#'   pipeline's outputs folder. 
+#'   the time-series CSV files in Databricks.
+#' @param output_directory A string specifying the directory path of your
+#'   pipeline's outputs folder in Databricks. 
 #' @param write_to_timeseries_directory Logical. If `TRUE`, updated time-series
 #'   data is written back to the original directory to overwrite any existing
 #'   time-series files there. Defaults to `FALSE`.
@@ -71,7 +71,7 @@ fps_update_timeseries <- function(tbl_list,
     cli::cli_abort("`survey_year` must be a single numeric value.")
   }
 
-  if (!dir.exists(timeseries_directory)) {
+  if (!DefraUtils::exists_dash_dir(timeseries_directory)) {
     cli::cli_abort("`timeseries_directory` must be a valid directory path.")
   }
 
@@ -99,18 +99,20 @@ fps_update_timeseries <- function(tbl_list,
     #READ IN TS###################################################################
     #NOTE: The tables read in are copy-pasted from the time series into separate csv files for each question for speed. Actual values are pasted in, rather than % (i.e. 0.1 instead of 10%)
 
-    tmp_fp <- here::here(timeseries_directory, paste0(q, ".csv"))
+    tmp_fp <- paste(timeseries_directory, paste0(q, ".csv"), sep ='/')
 
-    if(file.exists(tmp_fp)) {
+    if(DefraUtils::exists_dash_file(tmp_fp)) {
 
-      tmp_ts <- readr::read_csv(tmp_fp, show_col_types = FALSE)
+      tmp_ts <- DefraUtils::read_csv_from_volume(tmp_fp, show_col_types = FALSE)
 
       #backing up original time series in subdirectory before modification
-      backup_dir <- here::here(timeseries_directory, "backup")
-      if(!dir.exists(backup_dir)) {
-        dir.create(backup_dir, recursive = TRUE)
+      backup_dir <- paste(timeseries_directory, "backup", sep ='/')
+      if(!DefraUtils::exists_dash_dir(backup_dir)) {
+        DefraUtils::create_dash_dir(backup_dir)
       }
-      readr::write_csv(tmp_ts, here::here(backup_dir, paste0(q, ".csv")))
+      DefraUtils::write_csv_to_volume(tmp_ts,
+        paste(backup_dir, paste0(q, ".csv"), sep = '/')
+      )
 
       #FORMAT TS DATA###############################################################
 
@@ -144,7 +146,7 @@ fps_update_timeseries <- function(tbl_list,
       dplyr::mutate(value = value / 100,
                     ci = ci / 100)
 
-    if(file.exists(tmp_fp)) {
+    if(DefraUtils::exists_dash_file(tmp_fp)) {
 
       #match column order
       tmp_tbl <-
@@ -186,12 +188,15 @@ fps_update_timeseries <- function(tbl_list,
     }
 
 
-    #writing locally============================================================
-    if(!dir.exists(output_directory)) {
-      dir.create(output_directory, recursive = TRUE)
+    #writing databricks============================================================
+    if(!DefraUtils::exists_dash_dir(output_directory)) {
+      DefraUtils::create_dash_dir(output_directory)
     }
 
-    readr::write_csv(tmp_ts_csv, here::here(output_directory, paste0(q, ".csv")))
+    DefraUtils::write_csv_to_volume(tmp_ts_csv, 
+      paste(output_directory, paste0(q, ".csv"), sep ='/'),
+      overwrite = TRUE
+    )
 
     cli::cli_alert_info(paste0("Time series for ", q, " written at: {.file {output_directory}}."))
 

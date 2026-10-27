@@ -131,7 +131,7 @@ fps_process_factors <- function(.data,
   }
 
   #filtering factors (permits analysis even if no responses for a given level are present)
-  factors_list$fps_slr_name <- factors_list$fps_slr_name[factors_list$fps_slr_name %in% .data$fps_slr]
+  factors_list$fps_slr_name <- factors_list$fps_slr_name[factors_list$fps_slr_name %in% .data$fps_slr_name]
   factors_list$fps_gor <- factors_list$fps_gor[factors_list$fps_gor %in% .data$fps_gor]
   factors_list$fps_robust <- factors_list$fps_robust[factors_list$fps_robust %in% .data$fps_robust]
 
@@ -596,7 +596,8 @@ fps_prepare_results <- function(design,
                         tmp)
     #save workbook
     DefraUtils::write_xlsx_to_volume(wb,
-                           excel_file_path)
+                           excel_file_path,
+                           overwrite = TRUE)
 
   }
 
@@ -630,23 +631,30 @@ fps_read_excel_allsheets <- function(filename) {
     cli::cli_abort("`filename` must be a single string specifying the path to the Excel file.")
   }
 
-  if (!file.exists(filename)) {
+  if (!exists_dash_file(filename)) {
     cli::cli_abort("The file {.path {filename}} does not exist. Please check the path and try again.")
   }
 
   #read and process sheets======================================================
 
   # Check if the file has at least one sheet
-  sheets <- DefraUtils::read_xlsx_from_volume(filename)
+  local_file <- DefraUtils::read_file_from_volume(
+    filename,
+    ext = ".xlsx"
+  )
+
+  sheets <- readxl::excel_sheets(local_file)
 
   if (length(sheets) == 0) {
     cli::cli_abort("The file {.path {filename}} does not contain any sheets.")
   }
 
-  tmp <- lapply(sheets, function(x) DefraUtils::read_xlsx_from_volume(filename, sheet = x))
+  tmp <- lapply(
+    sheets,
+    \(x) readxl::read_xlsx(local_file, sheet = x)
+  )
 
   tmp <- lapply(tmp, as.data.frame)
-
   names(tmp) <- sheets
 
   return(tmp)
@@ -1091,7 +1099,18 @@ fps_analysis <- function(.data,
     #write formatted tables=====================================================
 
     #write tables (includes separate sheet for each factor)
-    DefraUtils::write_xlsx_to_volume(tmp_table_list[[q]], paste0(tables_fp, paste0("/table_", q, results_ext, ".xlsx")))
+    temp_wb <- createWorkbook()
+    for (sheet in names(tmp_table_list[[q]])) {
+      openxlsx::addWorksheet(temp_wb, sheetName = sheet)
+      openxlsx::writeData(
+        temp_wb,
+        sheet = sheet,
+        x = tmp_table_list[[q]][[sheet]]
+      )
+    }
+    DefraUtils::write_xlsx_to_volume(temp_wb, 
+      paste0(tables_fp, paste0("/table_", q, results_ext, ".xlsx")),
+      overwrite = TRUE)
 
     cli::cli_progress_update()
   }
