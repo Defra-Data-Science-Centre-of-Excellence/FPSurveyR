@@ -111,7 +111,8 @@ fps_update_timeseries <- function(tbl_list,
         DefraUtils::create_dash_dir(backup_dir)
       }
       DefraUtils::write_csv_to_volume(tmp_ts,
-        paste(backup_dir, paste0(q, ".csv"), sep = '/')
+        paste(backup_dir, paste0(q, ".csv"), sep = '/'),
+        overwrite = TRUE
       )
 
       #FORMAT TS DATA###############################################################

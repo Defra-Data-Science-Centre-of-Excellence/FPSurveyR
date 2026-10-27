@@ -485,3 +485,32 @@ fps_write_dataset <- function(out_dir = ".",
                                    overwrite = TRUE)
   cli::cli_alert_success("Data written to XLSX at {.path {dataset_fp}} in Databricks.")
 }
+
+
+#' @title FPS: Render: save files
+#' @author Asher Goldfeld
+#' @description This functions takes a directory and thyen will save all files
+#'  within that dir to Databricks using the `DefraUtils` package. Used as a 
+#'  work around for the mark down rendering process which saves locally. Locally
+#'  saved markdown outputs and figures are saved to a temp dir and then this
+#'  function saves them to Databricks
+#'
+#' @param temp_dir (chr) directory with files to be saved to Datarbricks
+#' @param databricks_dir (chr) directory on databricks the files should be saved to 
+#'
+#' @examples
+#' #fps_save_files(
+#' #  temp_dir = here::here(tempdir()) 
+#' #  databricks_dir = 'Volumes/prd_dash_lab/<volume>/<path>/'
+#' #  workbook = my_workbook, 
+#' #  delete = TRUE, 
+#' #  delete_unit = "hours", 
+#' #  delete_number = 24)
+#'
+#' @seealso \link[openxlsx]{saveWorkbook},
+#'  \link[DefraUtils]{dash_volume_write}
+#'
+#' @export
+fps_save_files <- function(dir) {
+
+}
