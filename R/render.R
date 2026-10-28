@@ -390,7 +390,7 @@ fps_write_dataset <- function(out_dir = ".",
     cli::cli_abort("`date` must be a single character string.")
   }
 
-  if (!dir.exists(out_dir)) {
+  if (!DefraUtils::exists_dash_dir(out_dir)) {
     cli::cli_abort("The `out_dir` directory does not exist.")
   }
 
@@ -480,7 +480,7 @@ fps_write_dataset <- function(out_dir = ".",
 
   ###write dataset==============================================================
   dataset_fp <- paste0(out_dir, "fps-ghg-dataset-", date, ".xlsx")
-  DefraUtils::write_xlsx_to_volume(wb = workbook,
+  DefraUtils::write_xlsx_to_volume(data = workbook,
                                    path = dataset_fp,
                                    overwrite = TRUE)
   cli::cli_alert_success("Data written to XLSX at {.path {dataset_fp}} in Databricks.")
