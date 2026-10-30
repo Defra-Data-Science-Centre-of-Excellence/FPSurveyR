@@ -16,7 +16,6 @@
 #'   the time-series CSV files in Databricks.
 #' @param output_directory A string specifying the directory path of your
 #'   pipeline's outputs folder in Databricks. 
-#' @param write_to_timeseries_directory Logical. If `TRUE`, updated time-series
 #'   data is written back to the original directory to overwrite any existing
 #'   time-series files there. Defaults to `FALSE`.
 #'
@@ -27,35 +26,31 @@
 #' \itemize{
 #'   \item Ensure response option names in the `name_responses` script match the column names in the time-series CSV files.
 #'   \item Time-series CSV filenames should correspond to the question identifiers (e.g., "Q17_exclNA.csv").
-#'   \item If write_to_timeseries_directory is `TRUE`, then any results output will overwrite any files in the time-series directory supplied for the given question.
 #'   }
 #'
 #' @examples
 #' #fps_update_timeseries(
 #' #  tbl_list = s8_livestock_tbl_list,
 #' #  questions = s8_livestock_ts_qs, timeseries_directory = "path/to/timeseries/",
-#' #  survey_year = 2023, write_to_timeseries_directory = FALSE)
+#' #  survey_year = 2023)
 #'
 #' @export
 fps_update_timeseries <- function(tbl_list,
                                   questions,
                                   survey_year = as.numeric(format(Sys.Date(), "%Y")),
                                   timeseries_directory,
-                                  output_directory,
-                                  write_to_timeseries_directory = FALSE) {
+                                  output_directory) {
 
   #testing======================================================================
   # tbl_list = s8_livestock_tbl_list
   # questions = s8_livestock_ts_qs
   # timeseries_directory = ts_dir
   # survey_year = survey_year
-  # write_to_timeseries_directory = FALSE
 
   # tbl_list = testing_df
   # questions = "Q1"
   # timeseries_directory = temp_dir
   # survey_year = 2024
-  # write_to_timeseries_directory = FALSE
   # output_directory <- paste0(tempdir(), "/")
   #validation===================================================================
 
@@ -81,10 +76,6 @@ fps_update_timeseries <- function(tbl_list,
 
   if(timeseries_directory == output_directory) {
     cli::cli_abort("`output_directory` must be unique to `timeseries_directory`")
-  }
-
-  if (!is.logical(write_to_timeseries_directory) || length(write_to_timeseries_directory) != 1) {
-    cli::cli_abort("`write_to_timeseries_directory` must be a single logical value.")
   }
 
 

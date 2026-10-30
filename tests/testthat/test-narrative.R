@@ -218,3 +218,4 @@ testthat::test_that("get_name outputs missing questions message correctly", {
 
   testthat::expect_equal(act, exp)
 })
+

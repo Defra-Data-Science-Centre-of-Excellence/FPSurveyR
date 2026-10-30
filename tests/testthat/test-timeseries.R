@@ -35,8 +35,7 @@ testthat::test_that("fps_update_timeseries: test data loaded and formatted corre
                                questions = "Q1",
                                survey_year = 2024,
                                timeseries_directory = temp_dir_ts,
-                               output_directory = temp_dir_out,
-                               write_to_timeseries_directory = FALSE)
+                               output_directory = temp_dir_out)
   act[["Q1"]] <-
     act[["Q1"]] %>%
     dplyr::mutate(dplyr::across( dplyr::where(is.numeric), ~ janitor::round_half_up(., digits = 1) ))

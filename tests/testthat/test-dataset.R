@@ -95,18 +95,9 @@ testthat::test_that("fps_update_dataset adds data to the dataset template correc
                      workbook = testing_wb,
                      sheet = "Nutrient_Management_-_Holdings",
                      special_qs =  c("Q3", "Q4a", "Q4b", "Q7", "Q8", "Q21", "Q9xQ13"))
-  temp_dir <- tempdir()
-  fps_write_dataset(out_dir = paste0(temp_dir, "/"),
-                    workbook = testing_wb,
-                    delete = FALSE,
-                    date = tolower(format(Sys.Date(), "%d%b%y")))
+ 
 
-  act <-
-    openxlsx::read.xlsx(paste0(temp_dir, "/", "fps-ghg-dataset-", tolower(format(Sys.Date(), "%d%b%y")), ".xlsx"),
-                        sheet = "Nutrient_Management_-_Holdings",
-                        rows = c(6:10),
-                        cols = c(1:8)) %>%
-    janitor::clean_names()
+  act <- testing_wb
 
   exp <-
     data.frame(

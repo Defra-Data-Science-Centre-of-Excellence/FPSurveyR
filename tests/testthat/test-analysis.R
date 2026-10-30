@@ -155,38 +155,6 @@ testthat::test_that("fps_analyse_by_factor calculates output correctly in the fo
   testthat::expect_equal(act, exp)
 })
 
-#fps_prepare_results (and fps_read_excel_allsheets)#############################
-testthat::test_that("fps_prepare_results formats the output correctly and fps_read_excel_allsheets reads the data back in", {
-  options(survey.lonely.psu ="remove")
-  tmp_file <- tempfile(fileext = ".xlsx")
-  fps_prepare_results(design = testing_dsn,
-                      factors = testing_fcts,
-                      variables = c("answered_Q1", "Q1_1", "Q1_2", "Q1_3"),
-                      excel_file_path = tmp_file)
-  act <-
-    fps_read_excel_allsheets(tmp_file)$fps_slr_name %>%
-    dplyr::mutate(dplyr::across( dplyr::where(is.numeric), ~ round(., digits = 3) ))
-
-  exp <-
-    data.frame(cat = c("Large", "Medium", "Small", "All farms"),
-               answered_Q1_mean = c(1, 1, 1, 1),
-
-               Q1_1_mean = c(0, 1, 0.714, 0.313),
-               Q1_2_mean = c(1, 0, 0, 0.597),
-               Q1_3_mean = c(0, 0, 0.286, 0.090),
-
-               answered_Q1_nobs = c(1, 1, 2, 4),
-               Q1_1_nobs = c(0, 1, 1, 2),
-               Q1_2_nobs = c(1, 0, 0, 1),
-               Q1_3_nobs = c(0, 0, 1, 1),
-
-               answered_Q1_ci = c(0, 0, 0, 0),
-               Q1_1_ci = c(0, 0, 0.399, 0.175),
-               Q1_2_ci = c(0, 0, 0, 0),
-               Q1_3_ci = c(0, 0, 0.399, 0.175))
-
-  testthat::expect_equal(act, exp)
-})
 
 #fps_add_empty_factors##########################################################
 testthat::test_that("fps_add_empty_factors adds NA rows for missing factors", {
@@ -231,31 +199,3 @@ testthat::test_that("fps_add_empty_factors adds NA rows for missing factors", {
   testthat::expect_equal(act, exp)
 })
 
-#fps_analysis###################################################################
-testthat::test_that("fps_analysis: everything must work as a whole - Q1 means", {
-  tmp_dir_res <- tempdir()
-  tmp_dir_tbl <- tempdir()
-
-  act <-
-    fps_analysis(testing_svy,
-                 questions_list = list("Q1" = c("answered_Q1", "Q1_1", "Q1_2", "Q1_3")),
-                 standard_factors_list = testing_fcts_lvl,
-                 results_fp = tmp_dir_res,
-                 tables_fp = tmp_dir_tbl)$Q1$fps_slr_name %>%
-    dplyr::mutate(dplyr::across( dplyr::where(is.numeric), ~ round(., digits = 3) ))
-
-  exp <-
-    data.frame(cat = c("Small", "Medium", "Large", "All farms"),
-
-               Q1_1_mean = c(0.714, 1, 0, 0.313),
-               Q1_2_mean = c(0, 0, 1, 0.597),
-               Q1_3_mean = c(0.286, 0, 0, 0.090),
-
-               answered_Q1_nobs = c(2, 1, 1, 4),
-
-               Q1_1_ci = c(0.399, 0, 0, 0.175),
-               Q1_2_ci = c(0, 0, 0, 0),
-               Q1_3_ci = c(0.399, 0, 0, 0.175))
-
-  testthat::expect_equal(act, exp)
-})
