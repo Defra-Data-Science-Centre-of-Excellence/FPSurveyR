@@ -10,6 +10,9 @@
 #'   corresponds to a table's latest survey results.
 #' @param questions A character vector of question identifiers to update (e.g.
 #'   "Q17").
+#' @param special_questions A character vector containing special questions that 
+#'   follow a different analysis to others. E.g. the Q7 given Q4 are seperate 
+#'   tables in the time series
 #' @param survey_year Numeric. The year of the latest survey data being added
 #'   (defaults to the current year).
 #' @param timeseries_directory A string specifying the directory path containing
@@ -112,7 +115,7 @@ fps_update_timeseries <- function(tbl_list,
       suppressWarnings(
         tmp_ts <-
           tmp_ts %>%
-          dplyr::mutate(value = as.numeric(value),
+          dplyr::mutate(proportion = as.numeric(proportion),
                         ci = as.numeric(ci),
                         year = as.numeric(year)) %>%
           #IMPORTANT: ensuring only years before the current are contained within the time-series before binding the latest data
@@ -123,7 +126,7 @@ fps_update_timeseries <- function(tbl_list,
 
     } else {
 
-      ts_col_order <- c("year", "response", "value", "ci")
+      ts_col_order <- c("response", "year", "proportion",  "ci")
 
     }
 
@@ -135,7 +138,7 @@ fps_update_timeseries <- function(tbl_list,
       tmp_tbl_list[[q]] %>%
       #IMPORTANT: ensure only the latest year is used in the rest of the function (in case of accidentally running the function twice, for example)
       dplyr::filter(year == survey_year) %>%
-      dplyr::mutate(value = value / 100,
+      dplyr::mutate(proportion = value / 100,
                     ci = ci / 100)
 
     if(DefraUtils::exists_dash_file(tmp_fp)) {
@@ -167,13 +170,11 @@ fps_update_timeseries <- function(tbl_list,
 
     tmp_ts_csv <-
       tmp_ts %>%
-      dplyr::mutate(response = gsub("\\\n", "", response),
-                    value = ifelse(is.na(value), "nc", value),
-                    ci = ifelse(is.na(ci), "nc", ci)) %>%
+      dplyr::mutate(response = gsub("\\\n", "", response)) %>%
       dplyr::group_by(response) %>%
       dplyr::arrange(year)
 
-    if(any(tmp_ts_csv$value[tmp_ts_csv$year == survey_year] == "nc")) {
+    if(any(is.na(tmp_ts_csv$proportion[tmp_ts_csv$year == survey_year]))) {
       cli::cli_abort(paste0("Update time-series: NC values for the following responses to ", q, " in latest year: '",
                             unique(tmp_ts_csv$response[tmp_ts_csv$value[tmp_ts_csv$year == survey_year] == "nc"]),
                             "' - likely that time series response option names do not match those in the name responses script (i.e. you need to edit the response names in the name responses script so they match the time series)"))
@@ -199,8 +200,8 @@ fps_update_timeseries <- function(tbl_list,
     #final formatting of values (e.g. make % rather than proportion and get rid of NA)
     tmp_ts_narrative <-
       tmp_ts %>%
-      dplyr::filter(!is.na(value)) %>%
-      dplyr::mutate(value = value * 100,
+      dplyr::filter(!is.na(proportion)) %>%
+      dplyr::mutate(value = proportion * 100,
                     ci = ci * 100)
 
     #add all data back into named list (from "name_responses" script)
