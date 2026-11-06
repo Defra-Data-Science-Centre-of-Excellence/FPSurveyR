@@ -195,17 +195,10 @@ fps_update_timeseries <- function(tbl_list,
 
 
 
-    #ADDING BACK IN TO LIST OF TABLES FOR NARRATIVE#############################
-
-    #final formatting of values (e.g. make % rather than proportion and get rid of NA)
-    tmp_ts_narrative <-
-      tmp_ts %>%
-      dplyr::filter(!is.na(proportion)) %>%
-      dplyr::mutate(value = proportion * 100,
-                    ci = ci * 100)
+    #ADDING BACK IN TO LIST OF TABLES FOR UPDATE#############################
 
     #add all data back into named list (from "name_responses" script)
-    tmp_tbl_list[[q]] <- tmp_ts_narrative
+    tmp_tbl_list[[q]] <- tmp_ts
 
     cli::cli_progress_update()
 
