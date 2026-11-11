@@ -209,3 +209,184 @@ fps_update_timeseries <- function(tbl_list,
   return(tmp_tbl_list)
 
 }
+
+
+#' @title FPS: Time-series: Update timeseries template
+#' @author Asher Goldfeld
+#' @description Updates the timeseries workbook from the template loaded in
+#'  the main pipeline script. This is used for the FPS publication. This loads in the
+#'  data and also creates the figures for each tiemseries. It dynamically fills
+#'  each timeseries and sets the formatting. 
+#'
+#' @param table_list A named list of data frames, where each data frame
+#'   corresponds to a table's latest survey results.
+#' @param questions A character vector of question identifiers to update (e.g.
+#'   "Q17").
+#' @param workbook An openxlsx2 workbook. This should the be 
+#'  `fps_timeseries_template.xlsx` in the template folder in the pipeline.
+#' @param sheet a character vector signifying the sheet name.
+#'
+#' @return A named list of updated time-series data frames, where each data
+#'   frame includes both the time-series data and the latest survey data.
+#'
+#' @details
+#' \itemize{
+#'   \item Ensure response option names in the `name_responses` script match the column names in the time-series CSV files.
+#'   \item Time-series CSV filenames should correspond to the question identifiers (e.g., "Q17_exclNA.csv").
+#'   }
+#'
+#' @export
+fps_update_timeseries_template <- function(table_list, 
+                                           questions, 
+                                           workbook, 
+                                           sheet) {
+
+  proportion_style <- workbook$get_cell_style(sheet = 'config_sheet', dims = 'B2')
+  confidence_interval_style <-workbook$get_cell_style(sheet = 'config_sheet', dims = 'B3')
+  col_heading_style <- workbook$get_cell_style(sheet = 'config_sheet', dims = 'B4')
+  text_style <- workbook$get_cell_style(sheet = 'config_sheet', dims = 'B5')
+
+  for (i in seq_along(questions)) {
+    #Set the question
+    q <- names(questions[i])
+    #Set the row number to insert the table into
+    tmp_rownum <- questions[[q]]
+    #Set the table of interest
+    q_table <- table_list[[q]]
+
+    #Create the wide table for proportion
+    prop_wide_table <- q_table %>%
+      dplyr::select('Response options' = response, year, proportion) %>%
+      tidyr::pivot_wider(
+        names_from = year,
+        values_from = proportion
+      ) %>% 
+      dplyr::mutate(
+        dplyr::across(
+          -"Response options",
+          ~ if (any(is.na(.x))) {
+            tidyr::replace_na(as.character(.x), "[x]")
+          } else {
+            .x
+          }
+        )
+      )
+    #Create the wide table for CI
+    ci_wide_table <- q_table %>%
+      dplyr::select('Response options' = response, year, ci) %>%
+      tidyr::pivot_wider(
+        names_from = year,
+        values_from = ci
+      ) %>% 
+      dplyr::mutate(
+        dplyr::across(
+          -"Response options",
+          ~ if (any(is.na(.x))) {
+            tidyr::replace_na(as.character(.x), "[x]")
+          } else {
+            .x
+          }
+        )
+      )
+    
+    number_of_columns <- ncol(prop_wide_table)
+
+    # Section row positions
+    proportion_heading_row <- tmp_rownum
+    proportion_data_row <- proportion_heading_row + 2 #Needed for the blank row in the template
+
+    ci_blank_row <- proportion_data_row + nrow(prop_wide_table) 
+    ci_data_row <- ci_blank_row + 1
+
+    # Write proportion values without column names
+    workbook$add_data(
+      sheet = sheet,
+      x = prop_wide_table,
+      start_col = 1,
+      start_row = proportion_data_row,
+      col_names = FALSE
+    )$set_cell_style(
+      sheet = sheet,
+      dims = openxlsx2::wb_dims(
+        rows =  1:(nrow(prop_wide_table)) + proportion_data_row - 1,
+        cols = 2:ncol(prop_wide_table)
+      ),
+      style = proportion_style
+    )$add_data(
+      sheet = sheet,
+      x = c('Proportion of holdings'),
+      start_col = ncol(prop_wide_table),
+      start_row = proportion_heading_row + 1,
+      col_names = FALSE
+    )$set_cell_style(
+      sheet = sheet,
+      dims = openxlsx2::wb_dims(
+        cols =  ncol(prop_wide_table),
+        rows = proportion_heading_row + 1
+      ),
+      style = text_style
+    )
+    
+    # Write CI values without column names
+    workbook$add_data(
+      sheet = sheet,
+      x = ci_wide_table,
+      start_col = 1,
+      start_row = ci_data_row,
+      col_names = FALSE
+    )$set_cell_style(
+      sheet = sheet,
+      dims = openxlsx2::wb_dims(
+        rows = 1:(nrow(ci_wide_table)) + ci_data_row -1,
+        cols = 2:ncol(ci_wide_table)
+      ),
+      style = confidence_interval_style
+    )$add_data(
+      sheet = sheet,
+      x = c('95% Confidence Intervals'),
+      start_col = ncol(ci_wide_table),
+      start_row = ci_blank_row,
+      col_names = FALSE
+    )$set_cell_style(
+      sheet = sheet,
+      dims = openxlsx2::wb_dims(
+        cols =  ncol(ci_wide_table),
+        rows = ci_blank_row
+      ),
+      style = text_style
+    )
+  
+
+    #Add in the col headers
+    workbook$add_data(
+      sheet = sheet,
+      x = matrix(colnames(prop_wide_table), nrow =1),
+      start_col = 1,
+      start_row = proportion_heading_row,
+      col_names = FALSE
+    )$set_cell_style(
+      sheet = sheet,
+      dims = openxlsx2::wb_dims(
+        cols = 2:ncol(prop_wide_table),
+        rows = proportion_heading_row
+      ),
+      style = col_heading_style
+    )$add_border(
+      sheet = sheet,
+      dims = openxlsx2::wb_dims(
+        cols =  2:ncol(prop_wide_table),
+        rows =  1:(2*nrow(prop_wide_table)+3) + proportion_heading_row -1
+      ),
+      update = TRUE
+    )$add_border(
+      sheet = sheet,
+      dims = openxlsx2::wb_dims(
+        cols =  2:ncol(prop_wide_table),
+        rows =  1:(nrow(prop_wide_table)+2) + proportion_heading_row -1
+      ),
+      update = TRUE
+    )
+  }
+
+  return(workbook)
+}
