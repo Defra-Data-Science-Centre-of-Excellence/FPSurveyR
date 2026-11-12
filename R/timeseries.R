@@ -117,7 +117,8 @@ fps_update_timeseries <- function(tbl_list,
           tmp_ts %>%
           dplyr::mutate(proportion = as.numeric(proportion),
                         ci = as.numeric(ci),
-                        year = as.numeric(year)) %>%
+                        year = as.numeric(year),
+                        value = proportion*100) %>%
           #IMPORTANT: ensuring only years before the current are contained within the time-series before binding the latest data
           dplyr::filter(year < survey_year)
       )
@@ -126,7 +127,7 @@ fps_update_timeseries <- function(tbl_list,
 
     } else {
 
-      ts_col_order <- c("response", "year", "proportion",  "ci")
+      ts_col_order <- c("response", "year", "proportion",  "ci", "value")
 
     }
 
