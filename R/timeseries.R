@@ -226,6 +226,8 @@ fps_update_timeseries <- function(tbl_list,
 #' @param workbook An openxlsx2 workbook. This should the be 
 #'  `fps_timeseries_template.xlsx` in the template folder in the pipeline.
 #' @param sheet a character vector signifying the sheet name.
+#' @param new_question_update A list of named integers. Used for formatting if a
+#'   question has changed in a year.
 #'
 #' @return A named list of updated time-series data frames, where each data
 #'   frame includes both the time-series data and the latest survey data.
@@ -240,13 +242,14 @@ fps_update_timeseries <- function(tbl_list,
 fps_update_timeseries_template <- function(table_list, 
                                            questions, 
                                            workbook, 
-                                           sheet) {
+                                           sheet,
+                                           new_question_update = NULL) {
 
   proportion_style <- workbook$get_cell_style(sheet = 'config_sheet', dims = 'B2')
   confidence_interval_style <-workbook$get_cell_style(sheet = 'config_sheet', dims = 'B3')
   col_heading_style <- workbook$get_cell_style(sheet = 'config_sheet', dims = 'B4')
   text_style <- workbook$get_cell_style(sheet = 'config_sheet', dims = 'B5')
-
+  
   for (i in seq_along(questions)) {
     #Set the question
     q <- names(questions[i])
@@ -261,16 +264,6 @@ fps_update_timeseries_template <- function(table_list,
       tidyr::pivot_wider(
         names_from = year,
         values_from = proportion
-      ) %>% 
-      dplyr::mutate(
-        dplyr::across(
-          -"Response options",
-          ~ if (any(is.na(.x))) {
-            tidyr::replace_na(as.character(.x), "[x]")
-          } else {
-            .x
-          }
-        )
       )
     #Create the wide table for CI
     ci_wide_table <- q_table %>%
@@ -278,17 +271,13 @@ fps_update_timeseries_template <- function(table_list,
       tidyr::pivot_wider(
         names_from = year,
         values_from = ci
-      ) %>% 
-      dplyr::mutate(
-        dplyr::across(
-          -"Response options",
-          ~ if (any(is.na(.x))) {
-            tidyr::replace_na(as.character(.x), "[x]")
-          } else {
-            .x
-          }
-        )
-      )
+      ) 
+    
+    # Locate missing cells in the year columns
+    na_locations <- which(
+      is.na(prop_wide_table[, -1, drop = FALSE]),
+      arr.ind = TRUE
+    )
     
     number_of_columns <- ncol(prop_wide_table)
 
@@ -372,14 +361,14 @@ fps_update_timeseries_template <- function(table_list,
         rows = proportion_heading_row
       ),
       style = col_heading_style
-    )$add_border(
+    )$add_border( # add outline border
       sheet = sheet,
       dims = openxlsx2::wb_dims(
         cols =  2:ncol(prop_wide_table),
         rows =  1:(2*nrow(prop_wide_table)+3) + proportion_heading_row -1
       ),
       update = TRUE
-    )$add_border(
+    )$add_border( # add border between proportion and CI
       sheet = sheet,
       dims = openxlsx2::wb_dims(
         cols =  2:ncol(prop_wide_table),
@@ -387,7 +376,109 @@ fps_update_timeseries_template <- function(table_list,
       ),
       update = TRUE
     )
+
+    #Add dotted line if it's a new year
+    if (q %in% names(new_question_update)) {
+      year <- new_question_update[[q]]
+      position <- which(year == as.integer(colnames(prop_wide_table)))
+
+      workbook$add_border(
+        sheet = sheet,
+        dims = openxlsx2::wb_dims(
+          cols =  position,
+          rows =  c(
+            1:(nrow(prop_wide_table)) + proportion_heading_row +1,
+            1:(nrow(ci_wide_table)) + ci_blank_row
+          )
+        ),
+        left_border = "dotted",
+        right_border = NULL,
+        top_border = NULL, 
+        bottom_border = NULL,
+        update = TRUE
+      )
+    }
+
+    #Add [x] for the NA's
+    if (nrow(na_locations) > 0) {
+      for (i in seq_len(nrow(na_locations))) {
+
+        #Add for proportion data
+        workbook$add_data(
+          sheet = sheet,
+          x = "[x]",
+          start_row = proportion_data_row + na_locations[i, "row"] - 1,
+          start_col = 1 + na_locations[i, "col"],
+          col_names = FALSE
+        )
+
+        #Add for CI data
+        workbook$add_data(
+          sheet = sheet,
+          x = "[x]",
+          start_row = ci_data_row + na_locations[i, "row"] - 1,
+          start_col = 1 + na_locations[i, "col"],
+          col_names = FALSE
+        )
+      }
+    }
   }
 
   return(workbook)
+}
+
+#' @title FPS: Time-series: Add depreciated tables to table list
+#' @author Asher Goldfeld
+#' @description This adds tables that have since been depreciated to the list of tables
+#'  used to update the time series template. These are printed but not updated hence need
+#'  to be added manually 
+#'
+#' @param table_list A named list of data frames, where each data frame
+#'   corresponds to a table's latest survey results.
+#' @param dep_qs A character vector of questions which are depreciated. These need
+#'   to exist in the previous time series directory
+#' @param prev_ts_dir A string specifying the directory path containing
+#'   the time-series CSV files in Databricks.
+#'
+#' @return A named list of updated time-series data frames, where each data
+#'   frame includes both the time-series data and the latest survey data.
+#'
+#' @details
+#' \itemize{
+#'   \item Ensure the depreciated Qs still exist in databricks.
+#'   \item Time-series CSV filenames should correspond to the question identifiers (e.g., "Q17_exclNA.csv").
+#'   }
+#'
+#' @export
+fps_add_dep_ts_tables <- function(table_list, dep_qs, prev_ts_dir) {
+
+  # validation
+  if (!is.list(table_list)) {
+    cli::cli_abort("`table_list` must be a named list of data frames.")
+  }
+
+  if (!is.character(dep_qs) || length(dep_qs) == 0) {
+    cli::cli_abort("`dep_qs` must be a non-empty character vector.")
+  }
+
+  if (!DefraUtils::exists_dash_dir(paste0(prev_ts_dir))) {
+    cli::cli_abort("`prev_ts_dir` does not exist in databricks.")
+  }
+
+  #update
+  for (i in seq_along(dep_qs)) {
+    q <- dep_qs[i]
+
+    if (DefraUtils::exists_dash_file(paste(prev_ts_dir, paste0(q, '.csv'), sep = '/'))) {
+      dep_q_tbl <- DefraUtils::read_csv_from_volume(
+        paste(prev_ts_dir, paste0(q, '.csv'), sep = '/')
+      )
+      table_list[[q]] <- dep_q_tbl
+    } else{
+      cli::cli_warn(paste(q, 'does not exist the in the databricks dir:', prev_ts_dir))
+    }
+
+  }
+
+  return(table_list)
 }

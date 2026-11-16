@@ -259,11 +259,15 @@ fps_name_responses <- function(table_list,
           by = "response"
         )
 
-      #format table to contain only response names
+      #format table to contain only response names 
       tmp_table <-
         tmp_table %>%
         dplyr::select(-response) %>%
         dplyr::rename(response = response_names)
+
+      if (any(is.na(tmp_table$response))) {
+        cli::cli_warn('Unmatched named responses present')
+      }
 
 
     } else {
