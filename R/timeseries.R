@@ -15,7 +15,7 @@
 #'   tables in the time series
 #' @param survey_year Numeric. The year of the latest survey data being added
 #'   (defaults to the current year).
-#' @param timeseries_directory A string specifying the directory path containing
+#' @param prev_timeseries_directory A string specifying the directory path containing
 #'   the time-series CSV files in Databricks.
 #' @param output_directory A string specifying the directory path of your
 #'   pipeline's outputs folder in Databricks. 
@@ -34,25 +34,25 @@
 #' @examples
 #' #fps_update_timeseries(
 #' #  tbl_list = s8_livestock_tbl_list,
-#' #  questions = s8_livestock_ts_qs, timeseries_directory = "path/to/timeseries/",
+#' #  questions = s8_livestock_ts_qs, prev_timeseries_directory = "path/to/timeseries/",
 #' #  survey_year = 2023)
 #'
 #' @export
 fps_update_timeseries <- function(tbl_list,
                                   questions,
                                   survey_year = as.numeric(format(Sys.Date(), "%Y")),
-                                  timeseries_directory,
+                                  prev_timeseries_directory,
                                   output_directory) {
 
   #testing======================================================================
   # tbl_list = s8_livestock_tbl_list
   # questions = s8_livestock_ts_qs
-  # timeseries_directory = ts_dir
+  # prev_timeseries_directory = ts_dir
   # survey_year = survey_year
 
   # tbl_list = testing_df
   # questions = "Q1"
-  # timeseries_directory = temp_dir
+  # prev_timeseries_directory = temp_dir
   # survey_year = 2024
   # output_directory <- paste0(tempdir(), "/")
   #validation===================================================================
@@ -69,16 +69,16 @@ fps_update_timeseries <- function(tbl_list,
     cli::cli_abort("`survey_year` must be a single numeric value.")
   }
 
-  if (!DefraUtils::exists_dash_dir(timeseries_directory)) {
-    cli::cli_abort("`timeseries_directory` must be a valid directory path.")
+  if (!DefraUtils::exists_dash_dir(prev_timeseries_directory)) {
+    cli::cli_abort("`prev_timeseries_directory` must be a valid directory path.")
   }
 
   if (!is.character(output_directory) ||length(output_directory) != 1 ) {
     cli::cli_abort("`output_directory` must be a character string.")
   }
 
-  if(timeseries_directory == output_directory) {
-    cli::cli_abort("`output_directory` must be unique to `timeseries_directory`")
+  if(prev_timeseries_directory == output_directory) {
+    cli::cli_abort("`output_directory` must be unique to `prev_timeseries_directory`")
   }
 
 
@@ -93,14 +93,14 @@ fps_update_timeseries <- function(tbl_list,
     #READ IN TS###################################################################
     #NOTE: The tables read in are copy-pasted from the time series into separate csv files for each question for speed. Actual values are pasted in, rather than % (i.e. 0.1 instead of 10%)
 
-    tmp_fp <- paste(timeseries_directory, paste0(q, ".csv"), sep ='/')
+    tmp_fp <- paste(prev_timeseries_directory, paste0(q, ".csv"), sep ='/')
 
     if(DefraUtils::exists_dash_file(tmp_fp)) {
 
       tmp_ts <- DefraUtils::read_csv_from_volume(tmp_fp, show_col_types = FALSE)
 
       #backing up original time series in subdirectory before modification
-      backup_dir <- paste(timeseries_directory, "backup", sep ='/')
+      backup_dir <- paste(prev_timeseries_directory, "backup", sep ='/')
       if(!DefraUtils::exists_dash_dir(backup_dir)) {
         DefraUtils::create_dash_dir(backup_dir)
       }

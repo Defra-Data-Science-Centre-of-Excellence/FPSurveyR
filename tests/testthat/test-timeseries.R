@@ -34,7 +34,7 @@ testthat::test_that("fps_update_timeseries: test data loaded and formatted corre
   act <- fps_update_timeseries(tbl_list = testing_df,
                                questions = "Q1",
                                survey_year = 2024,
-                               timeseries_directory = temp_dir_ts,
+                               prev_timeseries_directory = temp_dir_ts,
                                output_directory = temp_dir_out)
   act[["Q1"]] <-
     act[["Q1"]] %>%
