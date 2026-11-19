@@ -330,6 +330,8 @@ fps_format_md <- function(out_dir_md = ".",
 #'   Databricks. Defaults to the current directory (`"."`).
 #' @param workbook A `Workbook` object created with the `openxlsx` package. This
 #'   is the dataset to save.
+#' @param workbook_name Character. The name of the workbook will be saved under. 
+#'   e.g. the time series workbook is called `fps_timeseries`
 #' @param delete Logical. If `TRUE`, old copies of the dataset in the output
 #'   directory will be deleted. Defaults to `FALSE`.
 #' @param delete_unit Character. The time unit for deleting old files (e.g.,
@@ -360,6 +362,7 @@ fps_format_md <- function(out_dir_md = ".",
 #' @export
 fps_write_dataset <- function(out_dir = ".",
                               workbook,
+                              workbook_name,
                               delete = FALSE,
                               delete_unit = "hours",
                               delete_number = 12,
@@ -370,8 +373,12 @@ fps_write_dataset <- function(out_dir = ".",
     cli::cli_abort("`out_dir` must be a single character string.")
   }
 
-  if (!inherits(workbook, "Workbook")) {
-    cli::cli_abort("`workbook` must be a `Workbook` object created with the `openxlsx` package.")
+  if (!inherits(workbook, "Workbook") || !inherits(workbook, "wbWorkbook")) {
+    cli::cli_abort("`workbook` must be a `Workbook` object created with the `openxlsx` or `openxlsx2` package.")
+  }
+
+  if (!is.character(workbook_name) || length(workbook_name) != 1) {
+    cli::cli_abort("`workbook_name` must be a single character string.")
   }
 
   if (!is.logical(delete) || length(delete) != 1) {
@@ -413,7 +420,7 @@ fps_write_dataset <- function(out_dir = ".",
           dataset_f_info <- dataset_f_info |>
             dplyr::filter(
               !is_directory,
-              grepl("\\.xlsx$", path)
+              grepl(paste0(workbook_name, ".*\\.xlsx$"), path)
             ) |>
             dplyr::mutate(
               last_modified = as.POSIXct(
@@ -479,10 +486,21 @@ fps_write_dataset <- function(out_dir = ".",
 
 
   ###write dataset==============================================================
-  dataset_fp <- paste0(out_dir, "fps-ghg-dataset-", date, ".xlsx")
-  DefraUtils::write_xlsx_to_volume(data = workbook,
-                                   path = dataset_fp,
-                                   overwrite = TRUE)
+  dataset_fp <- paste0(out_dir, workbook_name, date, ".xlsx")
+  #catches if the workbook is from `openxlsx` or `openxlsx2` package
+  if (inherits(workbook, "Workbook")) {
+    DefraUtils::write_xlsx_to_volume(
+      data = workbook,
+      path = dataset_fp,
+      overwrite = TRUE
+    )
+  } else {
+    DefraUtils::write_xlsx2_to_volume(
+      data = workbook,
+      path = dataset_fp,
+      overwrite = TRUE
+    )
+  }
   cli::cli_alert_success("Data written to XLSX at {.path {dataset_fp}} in Databricks.")
 }
 
