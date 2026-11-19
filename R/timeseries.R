@@ -21,6 +21,8 @@
 #'   pipeline's outputs folder in Databricks. 
 #'   data is written back to the original directory to overwrite any existing
 #'   time-series files there. Defaults to `FALSE`.
+#' @param depreciated_qs A character vector detailing the names of the depreciated questions 
+#'   that need adding to the table list and trasnfering to the output folder.
 #'
 #' @return A named list of updated time-series data frames, where each data
 #'   frame includes both the time-series data and the latest survey data.
@@ -42,7 +44,8 @@ fps_update_timeseries <- function(tbl_list,
                                   questions,
                                   survey_year = as.numeric(format(Sys.Date(), "%Y")),
                                   prev_timeseries_directory,
-                                  output_directory) {
+                                  output_directory,
+                                  depreciated_qs = NULL) {
 
   #testing======================================================================
   # tbl_list = s8_livestock_tbl_list
@@ -81,14 +84,19 @@ fps_update_timeseries <- function(tbl_list,
     cli::cli_abort("`output_directory` must be unique to `prev_timeseries_directory`")
   }
 
+  if (!is.null(depreciated_qs) && (!is.character(depreciated_qs) || length(depreciated_qs) == 0)) {
+    cli::cli_abort("`depreciated_qs` must be a non-empty character vector if included.")
+  }
 
   tmp_tbl_list <- tbl_list
 
-  #set progress bar
-  cli::cli_progress_bar("Update time-series progress", total = length(questions))
-  for(i in seq_along(questions)) {
+  questions_inc_dep_q <- c(questions, depreciated_qs)
 
-    q <- questions[i]
+  #set progress bar
+  cli::cli_progress_bar("Update time-series progress", total = length(questions_inc_dep_q))
+  for(i in seq_along(questions_inc_dep_q)) {
+
+    q <- questions_inc_dep_q[i]
 
     #READ IN TS###################################################################
     #NOTE: The tables read in are copy-pasted from the time series into separate csv files for each question for speed. Actual values are pasted in, rather than % (i.e. 0.1 instead of 10%)
@@ -133,16 +141,17 @@ fps_update_timeseries <- function(tbl_list,
 
 
     #BIND TS TO NEW DATA##########################################################
-    #convert new data back into proportion values (from %) prior to bind
-
-    tmp_tbl <-
+    #catches if the question is depreciated and hence not updated 
+    if (!q %in% depreciated_qs) {
+      tmp_tbl <-
       tmp_tbl_list[[q]] %>%
       #IMPORTANT: ensure only the latest year is used in the rest of the function (in case of accidentally running the function twice, for example)
       dplyr::filter(year == survey_year) %>%
       dplyr::mutate(proportion = value / 100,
                     ci = ci / 100)
+    } 
 
-    if(DefraUtils::exists_dash_file(tmp_fp)) {
+    if (DefraUtils::exists_dash_file(tmp_fp) && !q %in% depreciated_qs) {
 
       #match column order
       tmp_tbl <-
@@ -425,60 +434,4 @@ fps_update_timeseries_template <- function(table_list,
   }
 
   return(workbook)
-}
-
-#' @title FPS: Time-series: Add depreciated tables to table list
-#' @author Asher Goldfeld
-#' @description This adds tables that have since been depreciated to the list of tables
-#'  used to update the time series template. These are printed but not updated hence need
-#'  to be added manually 
-#'
-#' @param table_list A named list of data frames, where each data frame
-#'   corresponds to a table's latest survey results.
-#' @param dep_qs A character vector of questions which are depreciated. These need
-#'   to exist in the previous time series directory
-#' @param prev_ts_dir A string specifying the directory path containing
-#'   the time-series CSV files in Databricks.
-#'
-#' @return A named list of updated time-series data frames, where each data
-#'   frame includes both the time-series data and the latest survey data.
-#'
-#' @details
-#' \itemize{
-#'   \item Ensure the depreciated Qs still exist in databricks.
-#'   \item Time-series CSV filenames should correspond to the question identifiers (e.g., "Q17_exclNA.csv").
-#'   }
-#'
-#' @export
-fps_add_dep_ts_tables <- function(table_list, dep_qs, prev_ts_dir) {
-
-  # validation
-  if (!is.list(table_list)) {
-    cli::cli_abort("`table_list` must be a named list of data frames.")
-  }
-
-  if (!is.character(dep_qs) || length(dep_qs) == 0) {
-    cli::cli_abort("`dep_qs` must be a non-empty character vector.")
-  }
-
-  if (!DefraUtils::exists_dash_dir(paste0(prev_ts_dir))) {
-    cli::cli_abort("`prev_ts_dir` does not exist in databricks.")
-  }
-
-  #update
-  for (i in seq_along(dep_qs)) {
-    q <- dep_qs[i]
-
-    if (DefraUtils::exists_dash_file(paste(prev_ts_dir, paste0(q, '.csv'), sep = '/'))) {
-      dep_q_tbl <- DefraUtils::read_csv_from_volume(
-        paste(prev_ts_dir, paste0(q, '.csv'), sep = '/')
-      )
-      table_list[[q]] <- dep_q_tbl
-    } else{
-      cli::cli_warn(paste(q, 'does not exist the in the databricks dir:', prev_ts_dir))
-    }
-
-  }
-
-  return(table_list)
 }
