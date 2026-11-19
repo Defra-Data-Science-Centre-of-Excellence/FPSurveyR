@@ -60,11 +60,11 @@ fps_update_timeseries <- function(tbl_list,
   # output_directory <- paste0(tempdir(), "/")
   #validation===================================================================
 
-  if (!is.list(tbl_list)) {
+  if (!is.list(tbl_list) && is.null(depreciated_qs)) {
     cli::cli_abort("`tbl_list` must be a named list of data frames.")
   }
 
-  if (!is.character(questions) || length(questions) == 0) {
+  if (is.null(depreciated_qs) && (!is.character(questions) || length(questions) == 0)) {
     cli::cli_abort("`questions` must be a non-empty character vector.")
   }
 
@@ -163,7 +163,7 @@ fps_update_timeseries <- function(tbl_list,
         rbind(tmp_ts,
               tmp_tbl)
 
-    } else {
+    } else if (!q %in% depreciated_qs) {
 
       #reorder cols manually
       tmp_tbl <-
