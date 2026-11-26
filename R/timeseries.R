@@ -220,6 +220,86 @@ fps_update_timeseries <- function(tbl_list,
 
 }
 
+#TODO: add new year functionality
+#' @title FPS: Time-series: Create timeseries figure
+#' @author Asher Goldfeld
+#' @description Creates a figure detailing the timeseries for each question.
+#'   This is used within the `fps_update_timeseries_template()` function to add 
+#'   figures in when adding the data to the graph. This works by saving the figure
+#'   to a temporary directory.
+#'
+#' @param q_table Data frame. A data frame with the time series data with the 
+#'   corresponding column names: response, year, proportion, ci, value.
+#' @param tmp_fig_dir Character. A temporary file location to save the figure too.
+#'
+#' @return Saves the ggplot figure to the temp directory
+#'
+#' @details
+#' \itemize{
+#'   \item Ensure the col names within the `q_table` contain the correct names
+#'   \item Ensure the `tmp_fig_dir` ends in '.../QX.png'
+#'   }
+#'
+#' @export
+fps_create_timeseries_figure <- function(q_table, tmp_fig_dir) {
+  
+  #Validation===================================================
+
+  if(!is.data.frame(q_table)) {
+    cli::cli_abort('`q_table` provided is not a data frame.')
+  }
+
+  n_years <- sort(unique(q_table$year))
+  x_breaks <- if (length(n_years) <= 5) {
+    n_years
+  } else {
+    n_years[round(seq(1, length(n_years), length.out = 4))]
+  }
+
+  n_response <- n_distinct(q_table$response)
+  table_length <- n_response*2 + 3
+  #Figure creation================================================
+  q_fig <- q_table %>%
+    dplyr::filter(!is.na(proportion)) %>%
+    ggplot(aes(
+      x = factor(year),
+      y = proportion,
+      colour = response,
+      group = response
+    )) +
+      geom_linerange(
+        aes(
+          ymin = proportion - ci,
+          ymax = proportion + ci
+        ),
+        alpha = 0.3,
+        linewidth = 3
+      ) +
+      geom_point(
+        size = 3.5,
+        shape = 18
+      ) +
+      labs(
+        x = "Year",
+        y = "Percentage"
+      ) +
+      scale_x_discrete(
+        breaks = as.character(x_breaks)
+      ) +
+      scale_y_continuous(
+        labels = scales::label_percent(),
+        limits = c(0, 1)
+      ) +
+      scale_colour_discrete(
+        labels = scales::label_wrap(30),
+        drop = FALSE
+      )
+  
+  #Save to a tmp directory before saving to the workbook
+  ggsave(tmp_fig_dir, q_fig,
+     width = 30*1.5*0.8, height = table_length*0.75*1.5, units = 'cm')
+}
+
 
 #' @title FPS: Time-series: Update timeseries template
 #' @author Asher Goldfeld
@@ -281,6 +361,9 @@ fps_update_timeseries_template <- function(table_list,
         names_from = year,
         values_from = ci
       ) 
+    
+    #Create figure 
+    fps_create_timeseries_figure(q_table, here::here(tempdir(), paste0(q, '.png')))
     
     # Locate missing cells in the year columns
     na_locations <- which(
@@ -431,6 +514,20 @@ fps_update_timeseries_template <- function(table_list,
         )
       }
     }
+
+    #Add figure in
+    workbook$add_image(
+      sheet = sheet,
+      file = here::here(tempdir(), paste0(q, '.png')),
+      dims = wb_dims(
+        cols = ncol(prop_wide_table) + 2,
+        rows = proportion_heading_row
+      ),
+      height = 0.75*(2*nrow(prop_wide_table) + 3),
+      width = 24,
+      units = "cm"
+    )
+
   }
 
   return(workbook)
