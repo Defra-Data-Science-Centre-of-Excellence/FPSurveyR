@@ -258,6 +258,7 @@ fps_create_timeseries_figure <- function(q_table, tmp_fig_dir) {
 
   n_response <- n_distinct(q_table$response)
   table_length <- n_response*2 + 3
+
   #Figure creation================================================
   q_fig <- q_table %>%
     dplyr::filter(!is.na(proportion)) %>%
@@ -281,19 +282,23 @@ fps_create_timeseries_figure <- function(q_table, tmp_fig_dir) {
       ) +
       labs(
         x = "Year",
-        y = "Percentage"
-      ) +
-      scale_x_discrete(
-        breaks = as.character(x_breaks)
+        y = "Percentage",
+        colour = 'Response option'
       ) +
       scale_y_continuous(
         labels = scales::label_percent(),
-        limits = c(0, 1)
+        limits = c(0, NA)
       ) +
       scale_colour_discrete(
         labels = scales::label_wrap(30),
         drop = FALSE
-      )
+      ) +
+      scale_x_discrete(
+        breaks = as.character(x_breaks)
+      ) 
+    if (n_response > 3) {
+      q_fig <- q_fig + facet_wrap(~response, nrow = 2)
+    }
   
   #Save to a tmp directory before saving to the workbook
   ggsave(tmp_fig_dir, q_fig,
