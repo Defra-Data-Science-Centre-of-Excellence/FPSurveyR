@@ -246,11 +246,15 @@ fps_create_timeseries_figure <- function(q_table, tmp_fig_dir, fig_levels) {
   
   #Validation===================================================
 
-  if(!is.data.frame(q_table)) {
+  if (!is.data.frame(q_table)) {
     cli::cli_abort('`q_table` provided is not a data frame.')
   }
 
-  #Fig constants
+  if (!is.character(fig_levels) || length(fig_levels) == 0) {
+    cli::cli_abort("`fig_levels` needs to be a none empty vector of characters")
+  }
+
+  #Fig constants=================================================
   years_included <- q_table %>%
     filter(!is.na(proportion)) %>%
     distinct(year) %>%
@@ -267,13 +271,27 @@ fps_create_timeseries_figure <- function(q_table, tmp_fig_dir, fig_levels) {
 
   #set GOV.UK palette
   DEFRAcolours <- c(unname(afcharts::af_colour_palettes$main6),
-                    "#FFDD00")
+                    "#FFDD00",
+                    "#77BC1F",
+                    "#D9262E",
+                    "#FF9E16",
+                    "#D51067",
+                    "#6D3075")
 
   #if series == 2, then use blue and orange from palette only (as per AF guidance)
   if(n_response == 2) {
     DEFRAcolours <- DEFRAcolours[c(1,4)]
   }
 
+  #Extra width if needed
+  extra_width_scale = 1
+  if(n_response > 8) {
+    extra_width_scale = 1.4
+  } 
+
+  #create factor for plotting
+  q_table <- q_table %>%
+    mutate(response = factor(response, levels = fig_levels))
 
   #Figure creation================================================
   q_fig <- q_table %>%
@@ -315,13 +333,24 @@ fps_create_timeseries_figure <- function(q_table, tmp_fig_dir, fig_levels) {
         breaks = x_breaks
       ) 
   
-    #Facet wrap if greater then 3 response types
+    #Facet wrap if greater then 3 response types 
     if (n_response == 4) {
-      q_fig <- q_fig + facet_wrap(~response, nrow = 2) +
+      q_fig <- q_fig + 
+        facet_wrap(
+          ~response,
+          nrow = 2,
+          labeller = labeller(response = label_wrap_gen(width = 30))
+        ) +
         theme(panel.spacing = unit(1.5, "lines"),
           legend.position = "none")
+      
     } else if (n_response > 4) {
-      q_fig <- q_fig + facet_wrap(~response, nrow = 2) +
+      q_fig <- q_fig + 
+        facet_wrap(
+          ~response,
+          nrow = 2,
+          labeller = labeller(response = label_wrap_gen(width = 30))
+        ) +
         theme(panel.spacing = unit(2, "lines"),
           legend.position = "none")
     }
@@ -329,7 +358,9 @@ fps_create_timeseries_figure <- function(q_table, tmp_fig_dir, fig_levels) {
   #Save to a tmp directory before saving to the workbook 
   #Forgive the weird 30*1.5*0.8 weirdness, resulted from manual tweaking of fig dimensions
   ggsave(tmp_fig_dir, q_fig,
-     width = 30*1.5*0.8, height = table_length*0.75*1.5, units = 'cm')
+    width = 30*1.5*0.8*extra_width_scale, 
+    height = table_length*0.75*1.5, 
+    units = 'cm')
 }
 
 
@@ -553,6 +584,13 @@ fps_update_timeseries_template <- function(table_list,
     }
 
     #Add figure in
+    
+    #extra width constant if needed
+    extra_width_constant <- 1
+    if(length(fig_levels) > 8) {
+      extra_width_constant <- 1.4
+    }
+
     workbook$add_image(
       sheet = sheet,
       file = here::here(tempdir(), paste0(q, '.png')),
@@ -561,7 +599,7 @@ fps_update_timeseries_template <- function(table_list,
         rows = proportion_heading_row
       ),
       height = 0.75*(2*nrow(prop_wide_table) + 3),
-      width = 24,
+      width = 24*extra_width_constant,
       units = "cm"
     )
 
