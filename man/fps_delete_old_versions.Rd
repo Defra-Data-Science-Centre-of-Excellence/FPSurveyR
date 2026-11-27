@@ -6,6 +6,8 @@
 \usage{
 fps_delete_old_versions(
   out_dir,
+  report_dir,
+  chart_dir,
   section = NULL,
   delete = FALSE,
   delete_unit = "hours",
@@ -13,8 +15,12 @@ fps_delete_old_versions(
 )
 }
 \arguments{
-\item{out_dir}{Character. The base directory containing the \code{report} and
+\item{out_dir}{Character. The base directory in Databricks containing the \code{report} and
 \code{charts} subdirectories.}
+
+\item{report_dir}{Character. The directory containing \code{reports}}
+
+\item{chart_dir}{Character. The directory containing \code{charts}}
 
 \item{section}{Character (optional). The specific section or subdirectory
 under \code{report} and \code{charts} to process. Defaults to \code{NULL}, meaning no
@@ -31,13 +37,13 @@ threshold for deletion. Defaults to \code{12}.}
 }
 \description{
 This function deletes old versions of reports and charts in the
-specified output directory if the \code{delete} parameter is set to \code{TRUE}. The
+specified output directory in Databricks if the \code{delete} parameter is set to \code{TRUE}. The
 deletion is based on a time period defined by \code{delete_unit} and
 \code{delete_number}. The function is designed to be used prior to rendering a
 new report to ensure only the current reports/charts are being used
 }
 \examples{
-#fps_delete_old_versions(out_dir = "output", section = "01_nutrient_management",
+#fps_delete_old_versions(out_dir = "/Volumes/prd_dash_lab/<volume>/<folder_path>", section = "01_nutrient_management",
 #                        delete = TRUE, delete_unit = "days", delete_number = 30)
 
 }

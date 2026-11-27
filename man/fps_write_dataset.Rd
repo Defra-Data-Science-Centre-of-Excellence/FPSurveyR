@@ -7,6 +7,7 @@
 fps_write_dataset(
   out_dir = ".",
   workbook,
+  workbook_name,
   delete = FALSE,
   delete_unit = "hours",
   delete_number = 12,
@@ -14,11 +15,14 @@ fps_write_dataset(
 )
 }
 \arguments{
-\item{out_dir}{Character. The directory where the dataset should be saved.
-Defaults to the current directory (\code{"."}).}
+\item{out_dir}{Character. The directory where the dataset should be saved in
+Databricks. Defaults to the current directory (\code{"."}).}
 
 \item{workbook}{A \code{Workbook} object created with the \code{openxlsx} package. This
 is the dataset to save.}
+
+\item{workbook_name}{Character. The name of the workbook will be saved under.
+e.g. the time series workbook is called \code{fps_timeseries}}
 
 \item{delete}{Logical. If \code{TRUE}, old copies of the dataset in the output
 directory will be deleted. Defaults to \code{FALSE}.}
@@ -47,7 +51,12 @@ the dataset can be deleted based on a specified time period.
 }
 }
 \examples{
-#fps_write_dataset(workbook = my_workbook, delete = TRUE, delete_unit = "hours", delete_number = 24)
+#fps_write_dataset(
+#  out_dir = 'Volumes/prd_dash_lab/<volume>/<path>/'
+#  workbook = my_workbook, 
+#  delete = TRUE, 
+#  delete_unit = "hours", 
+#  delete_number = 24)
 
 }
 \seealso{

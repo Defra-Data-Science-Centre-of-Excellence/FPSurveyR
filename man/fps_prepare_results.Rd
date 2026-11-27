@@ -33,12 +33,12 @@ or means (\code{FALSE}). Defaults to \code{FALSE}.}
 \item{factor_col}{A character string specifying the column name for factors
 in the output. Defaults to \code{"cat"}.}
 
-\item{excel_file_path}{A character string specifying the file path where the
+\item{excel_file_path}{A character string specifying the Databricks file path where the
 Excel workbook will be saved.}
 }
 \value{
 Saves the analysis results into an Excel file at the specified
-\code{excel_file_path}.
+\code{excel_file_path} in Databricks.
 }
 \description{
 This function calculates means or ratios for survey data
@@ -63,7 +63,7 @@ sheets (1 for each factor) in the output file.
 #  denominator = "total_area",
 #  ratio = TRUE,
 #  factor_col = "group",
-#  excel_file_path = "results.xlsx")
+#  excel_file_path = "Volume/prd_dash_lab/<volume>/<path>/results.xlsx")
 
 }
 \author{

@@ -7,7 +7,7 @@
 fps_read_excel_allsheets(filename)
 }
 \arguments{
-\item{filename}{A string specifying the path to the Excel file.}
+\item{filename}{A string specifying the path to the Excel file in Databricks.}
 }
 \value{
 A named list of data frames, where each element corresponds to a

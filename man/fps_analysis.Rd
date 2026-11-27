@@ -49,11 +49,11 @@ specified questions using a denominator derived from the variable names in
 \code{questions_list}. If \code{FALSE}, means are calculated. Defaults to
 \code{FALSE}.}
 
-\item{results_fp}{A character string specifying the file path where
+\item{results_fp}{A character string specifying the Databricks file path where
 intermediate analysis results will be saved as XLSX files. The path must
 exist, and the function appends the results filenames.}
 
-\item{tables_fp}{A character string specifying the file path where the final
+\item{tables_fp}{A character string specifying Databricks the file path where the final
 formatted tables will be saved as XLSX files. The path must exist, and the
 function appends the tables filenames.}
 }
@@ -67,8 +67,8 @@ This function performs high-level analysis for the Farm
 Practices Survey (FPS). It processes survey data, sets the survey design,
 and prepares results using lower-level functions (\code{fps_process_factors},
 \code{fps_prepare_results}, and \code{fps_analyse_by_factor}). The analysis outputs
-include formatted results and tables, written to XLSX files for quality
-assurance and subsequent use in the RAP process.
+include formatted results and tables, written to XLSX files in Databreicks
+for quality assurance and subsequent use in the RAP process.
 }
 \details{
 The function performs the following steps:

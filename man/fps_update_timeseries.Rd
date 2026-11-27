@@ -8,9 +8,9 @@ fps_update_timeseries(
   tbl_list,
   questions,
   survey_year = as.numeric(format(Sys.Date(), "\%Y")),
-  timeseries_directory,
-  output_directory = paste0(here::here("outputs", "timeseries"), "/"),
-  write_to_timeseries_directory = FALSE
+  prev_timeseries_directory,
+  output_directory,
+  depreciated_qs = NULL
 )
 }
 \arguments{
@@ -23,13 +23,20 @@ corresponds to a table's latest survey results.}
 \item{survey_year}{Numeric. The year of the latest survey data being added
 (defaults to the current year).}
 
-\item{timeseries_directory}{A string specifying the directory path of your
-pipeline's outputs folder. Defaults to
-\code{"example_project/outputs/timeseries/"}}
+\item{prev_timeseries_directory}{A string specifying the directory path containing
+the time-series CSV files in Databricks.}
 
-\item{write_to_timeseries_directory}{Logical. If \code{TRUE}, updated time-series
+\item{output_directory}{A string specifying the directory path of your
+pipeline's outputs folder in Databricks.
 data is written back to the original directory to overwrite any existing
 time-series files there. Defaults to \code{FALSE}.}
+
+\item{depreciated_qs}{A character vector detailing the names of the depreciated questions
+that need adding to the table list and trasnfering to the output folder.}
+
+\item{special_questions}{A character vector containing special questions that
+follow a different analysis to others. E.g. the Q7 given Q4 are seperate
+tables in the time series}
 }
 \value{
 A named list of updated time-series data frames, where each data
@@ -46,14 +53,13 @@ functions. The updated data are also written back to disk.
 \itemize{
 \item Ensure response option names in the \code{name_responses} script match the column names in the time-series CSV files.
 \item Time-series CSV filenames should correspond to the question identifiers (e.g., "Q17_exclNA.csv").
-\item If write_to_timeseries_directory is \code{TRUE}, then any results output will overwrite any files in the time-series directory supplied for the given question.
 }
 }
 \examples{
 #fps_update_timeseries(
 #  tbl_list = s8_livestock_tbl_list,
-#  questions = s8_livestock_ts_qs, timeseries_directory = "path/to/timeseries/",
-#  survey_year = 2023, write_to_timeseries_directory = FALSE)
+#  questions = s8_livestock_ts_qs, prev_timeseries_directory = "path/to/timeseries/",
+#  survey_year = 2023)
 
 }
 \author{
