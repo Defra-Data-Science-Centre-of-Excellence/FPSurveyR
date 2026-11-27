@@ -231,6 +231,7 @@ fps_update_timeseries <- function(tbl_list,
 #' @param q_table Data frame. A data frame with the time series data with the 
 #'   corresponding column names: response, year, proportion, ci, value.
 #' @param tmp_fig_dir Character. A temporary file location to save the figure too.
+#' @param fig_levels Character vector. Used to arrange the levels of colours in the plot.
 #'
 #' @return Saves the ggplot figure to the temp directory
 #'
@@ -241,7 +242,7 @@ fps_update_timeseries <- function(tbl_list,
 #'   }
 #'
 #' @export
-fps_create_timeseries_figure <- function(q_table, tmp_fig_dir) {
+fps_create_timeseries_figure <- function(q_table, tmp_fig_dir, fig_levels) {
   
   #Validation===================================================
 
@@ -249,21 +250,36 @@ fps_create_timeseries_figure <- function(q_table, tmp_fig_dir) {
     cli::cli_abort('`q_table` provided is not a data frame.')
   }
 
-  n_years <- sort(unique(q_table$year))
-  x_breaks <- if (length(n_years) <= 5) {
-    n_years
+  #Fig constants
+  years_included <- q_table %>%
+    filter(!is.na(proportion)) %>%
+    distinct(year) %>%
+    pull(year) 
+
+  x_breaks <- if (length(years_included) <= 5) {
+    years_included
   } else {
-    n_years[round(seq(1, length(n_years), length.out = 4))]
+    years_included[round(seq(1, length(years_included), length.out = 4))]
   }
 
   n_response <- n_distinct(q_table$response)
   table_length <- n_response*2 + 3
 
+  #set GOV.UK palette
+  DEFRAcolours <- c(unname(afcharts::af_colour_palettes$main6),
+                    "#FFDD00")
+
+  #if series == 2, then use blue and orange from palette only (as per AF guidance)
+  if(n_response == 2) {
+    DEFRAcolours <- DEFRAcolours[c(1,4)]
+  }
+
+
   #Figure creation================================================
   q_fig <- q_table %>%
     dplyr::filter(!is.na(proportion)) %>%
     ggplot(aes(
-      x = factor(year),
+      x = year,
       y = proportion,
       colour = response,
       group = response
@@ -289,18 +305,29 @@ fps_create_timeseries_figure <- function(q_table, tmp_fig_dir) {
         labels = scales::label_percent(),
         limits = c(0, NA)
       ) +
-      scale_colour_discrete(
+      scale_colour_manual(
+        values = setNames(DEFRAcolours, fig_levels),
+        breaks = fig_levels,
         labels = scales::label_wrap(30),
         drop = FALSE
       ) +
-      scale_x_discrete(
-        breaks = as.character(x_breaks)
+      scale_x_continuous(
+        breaks = x_breaks
       ) 
-    if (n_response > 3) {
-      q_fig <- q_fig + facet_wrap(~response, nrow = 2)
+  
+    #Facet wrap if greater then 3 response types
+    if (n_response == 4) {
+      q_fig <- q_fig + facet_wrap(~response, nrow = 2) +
+        theme(panel.spacing = unit(1.5, "lines"),
+          legend.position = "none")
+    } else if (n_response > 4) {
+      q_fig <- q_fig + facet_wrap(~response, nrow = 2) +
+        theme(panel.spacing = unit(2, "lines"),
+          legend.position = "none")
     }
   
-  #Save to a tmp directory before saving to the workbook
+  #Save to a tmp directory before saving to the workbook 
+  #Forgive the weird 30*1.5*0.8 weirdness, resulted from manual tweaking of fig dimensions
   ggsave(tmp_fig_dir, q_fig,
      width = 30*1.5*0.8, height = table_length*0.75*1.5, units = 'cm')
 }
@@ -368,7 +395,12 @@ fps_update_timeseries_template <- function(table_list,
       ) 
     
     #Create figure 
-    fps_create_timeseries_figure(q_table, here::here(tempdir(), paste0(q, '.png')))
+    fig_levels <- prop_wide_table %>% 
+      pull(`Response options`)
+
+    fps_create_timeseries_figure(q_table, 
+      tmp_fig_dir = here::here(tempdir(), paste0(q, '.png')),
+      fig_levels = fig_levels)
     
     # Locate missing cells in the year columns
     na_locations <- which(
