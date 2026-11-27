@@ -25,6 +25,9 @@ This package contains all the required functions for producing the [Farm Practic
 
 ## Installation
 
+#TODO update this
+#TODO update the tests
+
 ### Option 1
 
 You can install the development version of `FPSurveyR` from GitHub with:

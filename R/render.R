@@ -104,8 +104,8 @@ fps_delete_old_versions <- function(out_dir,
           ) 
 
           if (delete && nrow(file_info) > 0) {
-            file_info <- file_info |>
-              dplyr::filter(!is_directory) |>
+            file_info <- file_info %>%
+              dplyr::filter(!is_directory) %>%
               dplyr::mutate(
                 last_modified = as.POSIXct(
                   last_modified / 1000,
@@ -417,11 +417,11 @@ fps_write_dataset <- function(out_dir = ".",
 
         if (delete && nrow(dataset_f_info) > 0) {
 
-          dataset_f_info <- dataset_f_info |>
+          dataset_f_info <- dataset_f_info %>%
             dplyr::filter(
               !is_directory,
               grepl(paste0(workbook_name, ".*\\.xlsx$"), path)
-            ) |>
+            ) %>%
             dplyr::mutate(
               last_modified = as.POSIXct(
                 last_modified / 1000,
