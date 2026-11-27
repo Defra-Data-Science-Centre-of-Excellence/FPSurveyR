@@ -688,9 +688,13 @@ fps_read_excel_allsheets <- function(filename) {
 #'   that is added.
 #'
 #' @examples
-#' #data <- data.frame(cat = c("A", "B"), value = c(10, 20))
-#' #factors_list_full <- list(my_factor = c("A", "B", "C"))
-#' #updated_data <- fps_add_empty_factors(data, factor_col = "cat", factor = "my_factor", factors_list_full = factors_list_full)
+#' # data <- data.frame(cat = c("A", "B"), value = c(10, 20))
+#' # factors_list_full <- list(my_factor = c("A", "B", "C"))
+#' # updated_data <- fps_add_empty_factors(
+#' #  data, factor_col = "cat", 
+#' #  factor = "my_factor", 
+#' #  factors_list_full = factors_list_full
+#' # )
 #'
 #' @export
 fps_add_empty_factors <- function(.data,
