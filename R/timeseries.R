@@ -220,7 +220,7 @@ fps_update_timeseries <- function(tbl_list,
 
 }
 
-#TODO: add new year functionality
+
 #' @title FPS: Time-series: Create timeseries figure
 #' @author Asher Goldfeld
 #' @description Creates a figure detailing the timeseries for each question.
