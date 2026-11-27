@@ -9,7 +9,7 @@ Description: This package contains all the required functions for pre-processing
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-Depends: R (>= 3.5.0)
+Depends: R (>= 4.1.0)
 Suggests: 
     knitr,
     rmarkdown,
@@ -22,8 +22,8 @@ Imports:
     lubridate, openxlsx2,
     srvyr, purrr,
     janitor, here, cli, 
-    snakecase,
-    scales,
+    snakecase, brickster, tibble,
+    scales, ggplot2, stringr,
     afcharts, DefraUtils
 Config/testthat/edition: 3
 Config/roxygen2/version: 8.1.1

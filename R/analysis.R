@@ -18,6 +18,8 @@
 #' @param adhoc_factors_levels_list A named list mapping ad-hoc factor column
 #'   names to their levels. Defaults to `NULL`.
 #'
+#' @importFrom rlang :=
+#' 
 #' @return A list with four components:
 #' \describe{
 #'   \item{data}{The processed data frame with factors formatted.}
@@ -964,7 +966,7 @@ fps_analysis <- function(.data,
     #validation 2/2=============================================================
     if(!is.character(questions_list[[i]])) {
 
-      cli::cli_warning("`questions_list` should be a list of character vectors")
+      cli::cli_abort("`questions_list` should be a list of character vectors")
 
     }
 

@@ -1,3 +1,8 @@
+# FPSurveyR 1.2.0
+
+* Revamped the package to directly read and write data to Databricks in the DEFRA Dash platfrom
+* Created new functions to write the time series dataset for publication. including creating graphs
+
 # FPSurveyR 1.1.3
 
 * Add conditions for dealing with missing `fps_gor` factors "East of England" and "South East including London" in `fps_format_factors`.
