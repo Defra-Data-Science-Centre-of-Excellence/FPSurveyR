@@ -97,9 +97,9 @@ The function performs the following steps:
 
 }
 \seealso{
-\code{\link[fps_process_factors]{fps_process_factors}},
-\code{\link[fps_prepare_results]{fps_prepare_results}},
-\code{\link[fps_analyse_by_factor]{fps_analyse_by_factor}}
+\code{\link{fps_process_factors}},
+\code{\link{fps_prepare_results}},
+\code{\link{fps_analyse_by_factor}}
 }
 \author{
 Tom Pearson

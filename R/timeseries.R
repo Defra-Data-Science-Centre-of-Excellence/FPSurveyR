@@ -10,9 +10,6 @@
 #'   corresponds to a table's latest survey results.
 #' @param questions A character vector of question identifiers to update (e.g.
 #'   "Q17").
-#' @param special_questions A character vector containing special questions that 
-#'   follow a different analysis to others. E.g. the Q7 given Q4 are seperate 
-#'   tables in the time series
 #' @param survey_year Numeric. The year of the latest survey data being added
 #'   (defaults to the current year).
 #' @param prev_timeseries_directory A string specifying the directory path containing

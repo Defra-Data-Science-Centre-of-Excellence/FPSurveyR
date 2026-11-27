@@ -37,9 +37,13 @@ correct location. A warning message is displayed for each missing category
 that is added.
 }
 \examples{
-#data <- data.frame(cat = c("A", "B"), value = c(10, 20))
-#factors_list_full <- list(my_factor = c("A", "B", "C"))
-#updated_data <- fps_add_empty_factors(data, factor_col = "cat", factor = "my_factor", factors_list_full = factors_list_full)
+# data <- data.frame(cat = c("A", "B"), value = c(10, 20))
+# factors_list_full <- list(my_factor = c("A", "B", "C"))
+# updated_data <- fps_add_empty_factors(
+#  data, factor_col = "cat", 
+#  factor = "my_factor", 
+#  factors_list_full = factors_list_full
+# )
 
 }
 \author{

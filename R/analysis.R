@@ -857,9 +857,9 @@ fps_add_empty_factors <- function(.data,
 #' #  results_fp = "results/s1_results",
 #' #  tables_fp = "tables/s1_tables")
 #'
-#' @seealso \code{\link[fps_process_factors]{fps_process_factors}},
-#'   \code{\link[fps_prepare_results]{fps_prepare_results}},
-#'   \code{\link[fps_analyse_by_factor]{fps_analyse_by_factor}}
+#' @seealso \code{\link{fps_process_factors}},
+#'   \code{\link{fps_prepare_results}},
+#'   \code{\link{fps_analyse_by_factor}}
 #'
 #' @export
 fps_analysis <- function(.data,

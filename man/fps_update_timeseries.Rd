@@ -33,10 +33,6 @@ time-series files there. Defaults to \code{FALSE}.}
 
 \item{depreciated_qs}{A character vector detailing the names of the depreciated questions
 that need adding to the table list and trasnfering to the output folder.}
-
-\item{special_questions}{A character vector containing special questions that
-follow a different analysis to others. E.g. the Q7 given Q4 are seperate
-tables in the time series}
 }
 \value{
 A named list of updated time-series data frames, where each data
