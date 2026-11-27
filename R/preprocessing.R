@@ -234,6 +234,9 @@ fps_format_factors <- function(.data,
 #'   unique identifiers for observations. Default is `"cph_no"`.
 #' @param join_col A string specifying the column in `.data` and `pop_df` used
 #'   to join the datasets (strata column). Default is `"post_strat"`.
+#' 
+#' @importFrom rlang :=
+#' 
 #' @return A data frame with the population column (`num_pop`) added to the
 #'   input data, and strata (`join_col`) converted to factors. Weights are
 #'   calculated but not included in the output, as the `svyr` package

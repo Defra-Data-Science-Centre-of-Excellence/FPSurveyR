@@ -633,7 +633,7 @@ fps_read_excel_allsheets <- function(filename) {
     cli::cli_abort("`filename` must be a single string specifying the path to the Excel file.")
   }
 
-  if (!exists_dash_file(filename)) {
+  if (!DefraUtils::exists_dash_file(filename)) {
     cli::cli_abort("The file {.path {filename}} does not exist. Please check the path and try again.")
   }
 
@@ -823,6 +823,8 @@ fps_add_empty_factors <- function(.data,
 #'   formatted tables will be saved as XLSX files. The path must exist, and the
 #'   function appends the tables filenames.
 #'
+#' @importFrom rlang :=
+#' 
 #' @return A named list (`table_list`) containing the formatted results for each
 #'   question. Each element is a nested list of data frames, one for each factor
 #'   analysed for the respective question.
@@ -1101,7 +1103,7 @@ fps_analysis <- function(.data,
     #write formatted tables=====================================================
 
     #write tables (includes separate sheet for each factor)
-    temp_wb <- createWorkbook()
+    temp_wb <- openxlsx::createWorkbook()
     for (sheet in names(tmp_table_list[[q]])) {
       openxlsx::addWorksheet(temp_wb, sheetName = sheet)
       openxlsx::writeData(

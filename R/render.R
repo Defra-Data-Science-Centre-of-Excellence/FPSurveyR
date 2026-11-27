@@ -40,7 +40,7 @@ fps_delete_old_versions <- function(out_dir,
     cli::cli_abort("`out_dir` must be a single character string.")
   }
 
-  if (!exists_dash_dir(out_dir)) {
+  if (!DefraUtils::exists_dash_dir(out_dir)) {
     cli::cli_abort("The specified `out_dir` does not exist.")
   }
 
@@ -48,7 +48,7 @@ fps_delete_old_versions <- function(out_dir,
     cli::cli_abort("`report_dir` must be a single character string.")
   }
 
-  if (!exists_dash_dir(paste(out_dir, report_dir, section, sep = "/"))) {
+  if (!DefraUtils::exists_dash_dir(paste(out_dir, report_dir, section, sep = "/"))) {
     cli::cli_abort("The specified `report_dir` does not exist.")
   }
 

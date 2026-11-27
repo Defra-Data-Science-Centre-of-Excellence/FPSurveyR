@@ -17,10 +17,10 @@ Suggests:
 VignetteBuilder: knitr
 Imports: 
     magrittr, rlang,
-    dplyr, tidyr,
+    dplyr, tidyr, grid,
     openxlsx, readxl, 
     lubridate, openxlsx2,
-    srvyr, purrr,
+    srvyr, purrr, stats,
     janitor, here, cli, 
     snakecase, brickster, tibble,
     scales, ggplot2, stringr,

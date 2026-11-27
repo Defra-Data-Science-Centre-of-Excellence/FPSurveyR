@@ -256,9 +256,9 @@ fps_create_timeseries_figure <- function(q_table, tmp_fig_dir, fig_levels) {
 
   #Fig constants=================================================
   years_included <- q_table %>%
-    filter(!is.na(proportion)) %>%
-    distinct(year) %>%
-    pull(year) 
+    dplyr::filter(!is.na(proportion)) %>%
+    dplyr::distinct(year) %>%
+    dplyr::pull(year) 
 
   x_breaks <- if (length(years_included) <= 5) {
     years_included
@@ -266,7 +266,7 @@ fps_create_timeseries_figure <- function(q_table, tmp_fig_dir, fig_levels) {
     years_included[round(seq(1, length(years_included), length.out = 4))]
   }
 
-  n_response <- n_distinct(q_table$response)
+  n_response <- dplyr::n_distinct(q_table$response)
   table_length <- n_response*2 + 3
 
   #set GOV.UK palette
@@ -291,73 +291,73 @@ fps_create_timeseries_figure <- function(q_table, tmp_fig_dir, fig_levels) {
 
   #create factor for plotting
   q_table <- q_table %>%
-    mutate(response = factor(response, levels = fig_levels))
+    dplyr::mutate(response = factor(response, levels = fig_levels))
 
   #Figure creation================================================
   q_fig <- q_table %>%
     dplyr::filter(!is.na(proportion)) %>%
-    ggplot(aes(
+    ggplot2::ggplot(ggplot2::aes(
       x = year,
       y = proportion,
       colour = response,
       group = response
     )) +
-      geom_linerange(
-        aes(
+      ggplot2::geom_linerange(
+        ggplot2::aes(
           ymin = proportion - ci,
           ymax = proportion + ci
         ),
         alpha = 0.3,
         linewidth = 3
       ) +
-      geom_point(
+      ggplot2::geom_point(
         size = 3.5,
         shape = 18
       ) +
-      labs(
+      ggplot2::labs(
         x = "Year",
         y = "Percentage",
         colour = 'Response option'
       ) +
-      scale_y_continuous(
+      ggplot2::scale_y_continuous(
         labels = scales::label_percent(),
         limits = c(0, NA)
       ) +
-      scale_colour_manual(
-        values = setNames(DEFRAcolours, fig_levels),
+      ggplot2::scale_colour_manual(
+        values = stats::setNames(DEFRAcolours, fig_levels),
         breaks = fig_levels,
         labels = scales::label_wrap(30),
         drop = FALSE
       ) +
-      scale_x_continuous(
+      ggplot2::scale_x_continuous(
         breaks = x_breaks
       ) 
   
     #Facet wrap if greater then 3 response types 
     if (n_response == 4) {
       q_fig <- q_fig + 
-        facet_wrap(
+        ggplot2::facet_wrap(
           ~response,
           nrow = 2,
-          labeller = labeller(response = label_wrap_gen(width = 30))
+          labeller = ggplot2::labeller(response = ggplot2::label_wrap_gen(width = 30))
         ) +
-        theme(panel.spacing = unit(1.5, "lines"),
+        ggplot2::theme(panel.spacing = grid::unit(1.5, "lines"),
           legend.position = "none")
       
     } else if (n_response > 4) {
       q_fig <- q_fig + 
-        facet_wrap(
+        ggplot2::facet_wrap(
           ~response,
           nrow = 2,
-          labeller = labeller(response = label_wrap_gen(width = 30))
+          labeller = ggplot2::labeller(response = ggplot2::label_wrap_gen(width = 30))
         ) +
-        theme(panel.spacing = unit(2, "lines"),
+        theme(panel.spacing = grid::unit(2, "lines"),
           legend.position = "none")
     }
   
   #Save to a tmp directory before saving to the workbook 
   #Forgive the weird 30*1.5*0.8 weirdness, resulted from manual tweaking of fig dimensions
-  ggsave(tmp_fig_dir, q_fig,
+  ggplot2::ggsave(tmp_fig_dir, q_fig,
     width = 30*1.5*0.8*extra_width_scale, 
     height = table_length*0.75*1.5, 
     units = 'cm')
@@ -427,7 +427,7 @@ fps_update_timeseries_template <- function(table_list,
     
     #Create figure 
     fig_levels <- prop_wide_table %>% 
-      pull(`Response options`)
+      dplyr::pull(`Response options`)
 
     fps_create_timeseries_figure(q_table, 
       tmp_fig_dir = here::here(tempdir(), paste0(q, '.png')),
@@ -594,7 +594,7 @@ fps_update_timeseries_template <- function(table_list,
     workbook$add_image(
       sheet = sheet,
       file = here::here(tempdir(), paste0(q, '.png')),
-      dims = wb_dims(
+      dims = openxlsx2::wb_dims(
         cols = ncol(prop_wide_table) + 2,
         rows = proportion_heading_row
       ),
