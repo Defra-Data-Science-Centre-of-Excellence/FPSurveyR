@@ -1,8 +1,9 @@
 Package: FPSurveyR
 Title: Farm Practices Survey - an R package containing functions for data analysis and statistical notice production
-Version: 1.1.3
+Version: 1.2.0
 Authors@R: 
     c(person("Tom", "Pearson", email = "thomas.pearson@defra.gov.uk", role = c("aut", "cre")),
+    person("Asher", "Goldfeld", email = "asher.goldfeld@defra.gov.uk", role = "cre")
     person("Crown Copyright (Defra)", role = "cph"))
 Description: This package contains all the required functions for pre-processing the Farm Practises Survey data exported from MS Access by the June team, analysing the data to produce means/ratios and associated confidence intervals, and undertaking post-processing to format the data correctly for output as part of a RAP using parameterised R markdown to produce the statistical report on GOV.UK.
 License: MIT + file LICENSE
