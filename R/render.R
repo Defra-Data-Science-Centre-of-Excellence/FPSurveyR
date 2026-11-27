@@ -373,7 +373,7 @@ fps_write_dataset <- function(out_dir = ".",
     cli::cli_abort("`out_dir` must be a single character string.")
   }
 
-  if (!inherits(workbook, "Workbook") || !inherits(workbook, "wbWorkbook")) {
+  if (!inherits(workbook, "Workbook") && !inherits(workbook, "wbWorkbook")) {
     cli::cli_abort("`workbook` must be a `Workbook` object created with the `openxlsx` or `openxlsx2` package.")
   }
 
